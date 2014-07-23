@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<defs>
+<font id="bugoff-icon" horiz-adv-x="1000" >
+<font-face font-family="bugoff-icon" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="flash-off" unicode="&#xe800;" d="m500 788c-242 0-437-196-437-438 0-165 91-308 225-383 1 0 1-1 2-1 21-12 44-21 67-29l11-3c42-14 86-22 132-22 242 0 438 196 438 438 0 165-91 308-226 382-1 1-1 1-2 2-21 11-44 21-67 29l-11 3c-42 14-86 22-132 22z m0-105c18 0 36-2 53-5 19-3 38-8 56-14 3-1 7-2 11-4 12-4 23-9 35-15 106-56 178-167 178-295 0-73-24-139-64-194l-106 106-71-79 102-102c-54-40-121-64-194-64-18 0-36 2-53 5-19 3-38 8-56 14-3 1-7 2-11 4-12 5-25 10-37 16-104 57-176 167-176 294 0 73 24 139 64 194l106-106 71 79-102 102c54 40 121 64 194 64z m90-72l-271-302 166 0-75-220 272 302-167 0 75 220z" horiz-adv-x="1000" />
+</font>
+</defs>
+</svg>

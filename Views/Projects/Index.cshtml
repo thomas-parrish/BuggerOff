@@ -1,0 +1,61 @@
+﻿@using BuggerOff.ViewModels;
+@using BuggerOff.DataAccess;
+@using PagedList;
+@using PagedList.Mvc;
+
+@model IPagedList<ProjectViewModelItem>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+           Project Name
+        </th>
+        <th>
+            Tickets
+        </th>
+        <th>
+
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.projectName)
+        </td>
+        <td>
+            <a href="@Url.Action("../Tickets/Index", new { Search = item.projectName, ascending = ViewBag.ascending, searchBy = "Project" })">@item.numTickets</a>
+        </td>
+        <td class="col-md-3">
+            <div class="input-group-btn">
+                <a href="@Url.Action("Edit", new { id = item.projectId })" class="btn btn-success">
+                    <i class="glyphicon glyphicon-edit"></i>
+                </a>
+                <a href="@Url.Action("Details", new { id = item.projectId })" class="btn btn-success">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                </a>
+                <a href="@Url.Action("Delete", new { id = item.projectId })" class="btn btn-danger">
+                    <i class="glyphicon glyphicon-flash"></i>
+                </a>
+            </div>
+        </td>
+    </tr>
+}
+
+</table>
+
+    <!-- output a paging control that lets the user navigation to the previous page, next page, etc -->
+<div id="pagelist" style="text-align:center;">
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index"))
+</div>

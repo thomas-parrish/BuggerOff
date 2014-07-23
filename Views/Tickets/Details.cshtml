@@ -1,0 +1,98 @@
+﻿@model BuggerOff.DataAccess.Ticket
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Ticket</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Updated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Updated)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Completed)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Completed)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedByUser.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedByUser.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AssignedToUser.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AssignedToUser.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Project.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Project.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TicketPriority.Priority)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TicketPriority.Priority)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TicketStatus.Status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TicketStatus.Status)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

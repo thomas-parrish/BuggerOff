@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - BuggerOff!</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+
+    <!-- SmartMenus jQuery Bootstrap Addon CSS -->
+    <link href="/Content/Smartmenus-0.9.6/addons/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Static navbar -->
+    <div class="navbar navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container center-block">
+            <img src="~/Content/BuggerOffLogo.png" class="center-block" />
+            <div class="container center-block">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="navbar-collapse collapse">
+
+                    <!-- Left nav -->
+                    <ul class="nav navbar-nav">
+                        <li></li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        <li>@Html.ActionLink("Car List", "Index", "CarModels")</li>
+                        <li>
+                            <a href="#">Dropdown</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li>
+                                    <a href="#">One more separated link</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Action</a></li>
+                                        <li><a href="#">Another action</a></li>
+                                        <li>
+                                            <a href="#">A long sub menu</a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">Action</a></li>
+                                                <li><a href="#">Something else here</a></li>
+                                                <li class="disabled"><a class="disabled" href="#">Disabled item</a></li>
+                                                <li><a href="#">One more link</a></li>
+                                                <li><a href="#">Menu item 1</a></li>
+                                                <li><a href="#">Menu item 2</a></li>
+                                                <li><a href="#">Menu item 3</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#">Another link</a></li>
+                                        <li><a href="#">One more link</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>    
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>@DateTime.Now.Year - BuggerOff!</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/Content/Smartmenus-0.9.6/libs/demo-assets/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- SmartMenus jQuery plugin -->
+    <script type="text/javascript" src="/Content/Smartmenus-0.9.6/jquery.smartmenus.js"></script>
+
+    <!-- SmartMenus jQuery Bootstrap Addon -->
+    <script type="text/javascript" src="/Content/Smartmenus-0.9.6/addons/bootstrap/jquery.smartmenus.bootstrap.js"></script>
+</body>
+</html>
+
+
