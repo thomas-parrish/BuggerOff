@@ -36,6 +36,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Tickets
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Index(int? page, int? numPerPage, string sortBy, bool showCompleted = false, string search = "", string searchBy = "", bool ascending = true )
         {
             var pageNumber = page ?? 1;
@@ -59,8 +60,17 @@ namespace BuggerOff.Controllers
             //If show completed is not checked, select only unresolved bugs
             if (!showCompleted)
                 tickets = tickets.Where(m => m.Completed == null);
+            var currentUserId = User.Identity.GetUserId();
+            if (!User.IsInRole("Administrator"))
+            {
+                tickets = tickets.Where(m => m.Project.AspNetUsers.Any(u => u.Id == currentUserId));
+                if (!User.IsInRole("Project Manager"))
+                {
+                    tickets = tickets.Where(m => (m.AssignedToUser.Id == currentUserId) || (m.AssignedToUser == null));
+                }
+            }
 
-            
+
             if (ascending)
             {
                 //Sort ascending by sortBy
@@ -108,6 +118,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Tickets/Details/5
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -123,6 +134,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Create()
         {
             ViewBag.AssignedTo = new SelectList(db.AspNetUsers, "Id", "UserName");
@@ -137,6 +149,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize( Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Create([Bind(Include = "Title,Description,StatusId,AssignedTo,ProjectId,PriorityId")] Ticket ticket)
         {
             if (ModelState.IsValid)
@@ -156,6 +169,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Tickets/Edit/5
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -180,10 +194,12 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Edit([Bind(Include = "id,Title,Description,StatusId,Created,Updated,CreatedBy,Completed,AssignedTo,ProjectId,PriorityId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
+                ticket.AssignedToUser = db.AspNetUsers.Find(ticket.AssignedTo);
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -197,6 +213,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -214,6 +231,7 @@ namespace BuggerOff.Controllers
         // POST: Tickets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult DeleteConfirmed(int id)
         {
             Ticket ticket = db.Tickets.Find(id);

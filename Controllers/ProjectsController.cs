@@ -20,6 +20,7 @@ namespace BuggerOff.Controllers
         private BuggerOffEntities db = new BuggerOffEntities();
 
         // GET: Projects
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Index(int? page)
         {
             var pageNumber = page ?? 1;
@@ -27,6 +28,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Projects/Details/5
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -42,6 +44,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Create()
         {
             return View();
@@ -52,6 +55,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Create([Bind(Include = "Name")] Project project)
         {
             project.CreatedBy = User.Identity.GetUserId();
@@ -65,6 +69,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -93,7 +98,7 @@ namespace BuggerOff.Controllers
             
             return View(ViewModel);
         }
-
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult GetViewModel(int? id)
         {
             if (id == null)
@@ -124,7 +129,7 @@ namespace BuggerOff.Controllers
         }
 
         [HttpPost]
-        
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult SaveViewModel(EditProjectViewModel ViewModel)
         {
             var project = db.Projects.Where(m => m.Id == ViewModel.ProjectId).ToList().FirstOrDefault();
@@ -177,6 +182,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit([Bind(Include = "Id,Name,CreatedBy")] Project project, string newUserName="")
         {
             AspNetUser newUser = db.AspNetUsers.Where(m => m.UserName == newUserName).ToList().FirstOrDefault();
@@ -197,6 +203,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -214,6 +221,7 @@ namespace BuggerOff.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult DeleteConfirmed(int id)
         {
             Project project = db.Projects.Find(id);

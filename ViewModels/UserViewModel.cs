@@ -15,6 +15,7 @@ namespace BuggerOff.ViewModels
         public string userName { get; set; }
         public string email { get; set; }
         public string phoneNumber { get; set; }
+        public List<String> roles { get; set; }
     }
 
 
@@ -28,9 +29,16 @@ namespace BuggerOff.ViewModels
             BuggerOffEntities db = new BuggerOffEntities();
             userItems = new List<UserViewModelItem>();
 
-            foreach(var item in db.AspNetUsers)
+            var userList = db.AspNetUsers.ToList();
+            foreach(var user in userList)
             {
-                userItems.Add(new UserViewModelItem() { userId = item.Id, userName = item.UserName, email = item.Email, phoneNumber = item.PhoneNumber, numTickets = item.Tickets.Count });
+                var roleNames = new List<String>();
+                var roleList = user.AspNetRoles.ToList();
+                foreach (var role in roleList)
+                {
+                    roleNames.Add(role.Name);
+                }
+                userItems.Add(new UserViewModelItem() { userId = user.Id, userName = user.UserName, email = user.Email, phoneNumber = user.PhoneNumber, numTickets = user.Tickets.Count, roles = roleNames });
             }
         }
 

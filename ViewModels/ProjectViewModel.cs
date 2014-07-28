@@ -30,7 +30,9 @@ namespace BuggerOff.ViewModels
             BuggerOffEntities db = new BuggerOffEntities();
             projectItems = new List<ProjectViewModelItem>();
 
-            foreach(var item in db.Projects)
+            var projectList = db.Projects.ToList();
+
+            foreach(var item in projectList)
             {
                 projectItems.Add(new ProjectViewModelItem() { projectId = item.Id, projectName = item.Name, numTickets = item.Tickets.Count });
             }

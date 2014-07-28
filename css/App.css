@@ -3428,9 +3428,13 @@ ul.support-list li {
 }
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-  
+  #sidebar-wrapper.collapse {
+      position:relative;
+  }
 }
 /* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
-  
+    #sidebar-wrapper.collapse {
+        position: relative;
+    }
 }

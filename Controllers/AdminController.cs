@@ -20,12 +20,14 @@ namespace BuggerOff.Controllers
         private BuggerOffEntities db = new BuggerOffEntities();
 
         // GET: Admin
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Index()
         {
             return View(db.AspNetRoles.ToList());
         }
 
         // GET: Admin/Details/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -41,6 +43,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Admin/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             return View();
@@ -51,6 +54,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<ActionResult> Create([Bind(Include = "Name")] RolesViewModel newRole)
         {
             var roleStore = new ApplicationRoleStore( db );
@@ -66,6 +70,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Admin/Edit/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -85,6 +90,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit([Bind(Include = "Id,Name")] AspNetRole aspNetRole)
         {
             if (ModelState.IsValid)
@@ -97,6 +103,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Admin/Delete/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -114,6 +121,7 @@ namespace BuggerOff.Controllers
         // POST: Admin/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult DeleteConfirmed(string id)
         {
             AspNetRole aspNetRole = db.AspNetRoles.Find(id);

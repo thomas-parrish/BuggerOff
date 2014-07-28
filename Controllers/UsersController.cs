@@ -16,6 +16,7 @@ namespace BuggerOff.Controllers
         private BuggerOffEntities db = new BuggerOffEntities();
 
         // GET: Users
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Index(int? page)
         {
             var pageNumber = page ?? 1;
@@ -23,6 +24,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Users/Details/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -38,6 +40,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Users/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             return View();
@@ -48,6 +51,7 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] AspNetUser aspNetUser)
         {
             if (ModelState.IsValid)
@@ -61,6 +65,7 @@ namespace BuggerOff.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -80,12 +85,14 @@ namespace BuggerOff.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Edit()
         {
             return View();
         }
 
         // GET: Users/Delete/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -103,6 +110,7 @@ namespace BuggerOff.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult DeleteConfirmed(string id)
         {
             AspNetUser aspNetUser = db.AspNetUsers.Find(id);
@@ -121,7 +129,7 @@ namespace BuggerOff.Controllers
         }
 
 
-
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult GetEditViewModel(string id)
         {
             if (id == "")
@@ -136,6 +144,7 @@ namespace BuggerOff.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult SaveEditViewModel(AdminEditUSerViewModel ViewModel)
         {
             var user = db.AspNetUsers.Find(ViewModel.UserId);

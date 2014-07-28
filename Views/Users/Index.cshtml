@@ -28,7 +28,7 @@
             Email
         </th>
         <th>
-            Phone Number
+            Role
         </th>
         <th>
             Tickets
@@ -47,61 +47,29 @@
             @item.email
         </td>
         <td>
-            @item.phoneNumber
+            @item.roles.First()
         </td>
         <td>
             <a href="@Url.Action("../Tickets/Index", new { Search = item.userName, ascending = ViewBag.ascending, searchBy = "AssignedTo" })">@item.numTickets</a>
         </td>
         <td class="col-md-3">
             <div class="input-group-btn">
-                <a href="@Url.Action("Edit", new { id = item.userId })" class="btn btn-success">
-                    <i class="glyphicon glyphicon-edit"></i>
+                @if (User.IsInRole("Administrator")) { 
+                <a href="@Url.Action("Edit", "Users", new { id = item.userId })" class="btn btn-success">
+                    <i class="glyphicon glyphicon-edit"></i> Edit
                 </a>
+                }
                 <a href="@Url.Action( "Details", new { id = item.userId })" class="btn btn-success">
-                    <i class="glyphicon glyphicon-plus-sign"></i>
+                    <i class="glyphicon glyphicon-plus-sign"></i> Details
                 </a>
+                @if(User.IsInRole("Administrator")) { 
                 <a href="@Url.Action("Delete", new { id = item.userId })" class="btn btn-danger">
-                    <i class="glyphicon glyphicon-flash"></i>
+                    <i class="icon-flash-off"></i> Delete
                 </a>
+                }
             </div>
         </td>
     </tr>
 }
 
 </table>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>   
-<script type="text/javascript">
-
-            jQuery(document).ready(function() {
-                /*
-                 * Replace all SVG images with inline SVG
-                 */
-                    jQuery('img.svg').each(function(){
-                        var $img = jQuery(this);
-                        var imgID = $img.attr('id');
-                        var imgClass = $img.attr('class');
-                        var imgURL = $img.attr('src');
-
-                        jQuery.get(imgURL, function(data) {
-                            // Get the SVG tag, ignore the rest
-                            var $svg = jQuery(data).find('svg');
-
-                            // Add replaced image's ID to the new SVG
-                            if(typeof imgID !== 'undefined') {
-                                $svg = $svg.attr('id', imgID);
-                            }
-                            // Add replaced image's classes to the new SVG
-                            if(typeof imgClass !== 'undefined') {
-                                $svg = $svg.attr('class', imgClass+' replaced-svg');
-                            }
-
-                            // Remove any invalid XML tags as per http://validator.w3.org
-                            $svg = $svg.removeAttr('xmlns:a');
-
-                            // Replace image with new SVG
-                            $img.replaceWith($svg);
-                        });
-
-                    });
-            });
-</script>

@@ -1,190 +1,438 @@
 ﻿<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js">
- <!--<![endif]-->
+<html lang="en">
 <head>
-    <title>Dashboard - Canvas Admin</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="">
-    <meta name="author" content="" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>Blank Page - Ace Admin</title>
 
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,800italic,400,600,800" type="text/css">
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/bootstrap.min.css" type="text/css" />
-    <link rel="stylesheet" href="~/js/libs/css/ui-lightness/jquery-ui-1.9.2.custom.css" type="text/css" />
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
 
-    <link rel="stylesheet" href="~/js/plugins/icheck/skins/minimal/blue.css" type="text/css" />
-    <link rel="stylesheet" href="~/js/plugins/select2/select2.css" type="text/css" />
-    <link rel="stylesheet" href="~/js/plugins/fullcalendar/fullcalendar.css" type="text/css" />
+    <!-- page specific plugin styles -->
+    <!-- text fonts -->
+    <link rel="stylesheet" href="/assets/css/ace-fonts.css" />
+    <link rel="stylesheet" href="/css/bugoff-icon.css" />
 
-    <link rel="stylesheet" href="~/css/App.css" type="text/css" />
+    <!-- ace styles -->
+    <link rel="stylesheet" href="/assets/css/ace.min.css" id="main-ace-style" />
 
-    <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
-    <link rel="stylesheet" href="~/css/bugoff-icon.css" type="text/css" />
+    <!--[if lte IE 9]>
+        <link rel="stylesheet" href="../assets/css/ace-part2.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" href="/assets/css/ace-skins.min.css" />
+    <link rel="stylesheet" href="/assets/css/ace-rtl.min.css" />
+
+    <!--[if lte IE 9]>
+      <link rel="stylesheet" href="../assets/css/ace-ie.min.css" />
+    <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/assets/js/ace-extra.min.js"></script>
+
+    <!-- HTML5shiv and Respond.js for IE8 to support HTML5 elements and media queries -->
+    <!--[if lte IE 8]>
+    <script src="../assets/js/html5shiv.min.js"></script>
+    <script src="../assets/js/respond.min.js"></script>
+    <![endif]-->
 
 </head>
 
-<body>
+<body class="skin-1">
+    <!-- #section:basics/navbar.layout -->
+    <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+        <script type="text/javascript">
+            try { ace.settings.check('navbar', 'fixed') } catch (e) { }
+        </script>
 
-    <div id="wrapper">
+        <div class="navbar-container" id="navbar-container">
+            <!-- #section:basics/sidebar.mobile.toggle -->
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler">
+                <span class="sr-only">Toggle sidebar</span>
 
-        <header id="header">
+                <span class="icon-bar"></span>
 
-            <h1 id="site-logo">
-                <a href="~/home/index">
-                    <img src="~/Content/BuggerOffLogo3.png" style="height:40px;" alt="Site Logo" />
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- /section:basics/sidebar.mobile.toggle -->
+            <div class="navbar-header pull-left">
+                <!-- #section:basics/navbar.layout.brand -->
+                <a href="#" class="navbar-brand">
+                    <img src="~/Content/BuggerOffLogo3.png" style="height:25px;" />
                 </a>
-            </h1>
 
-            <a href="javascript:;" data-toggle="collapse" data-target=".top-bar-collapse" id="top-bar-toggle" class="navbar-toggle collapsed">
-                <i class="fa fa-cog"></i>
-            </a>
+                <!-- /section:basics/navbar.layout.brand -->
+                <!-- #section:basics/navbar.toggle -->
+                <!-- /section:basics/navbar.toggle -->
+            </div>
 
-            <a href="javascript:;" data-toggle="collapse" data-target=".sidebar-collapse" id="sidebar-toggle" class="navbar-toggle collapsed">
-                <i class="fa fa-reorder"></i>
-            </a>
-
-        </header> <!-- header -->
-
-
-        <nav id="top-bar" class="collapse top-bar-collapse">
-            <!--Top Menu -->
-            <ul class="nav navbar-nav pull-left">
-                <li class="">
-                    <a href="/Home/Index">
-                        <i class="fa fa-home"></i>
-                        Home
-                    </a>
-                </li>
-            </ul>
-
-            @Html.Partial("_LoginPartial")
-
-        </nav> <!-- /#top-bar -->
-
-
-        <div id="sidebar-wrapper" class="collapse sidebar-collapse">
-
-            <div id="search">
-                <form>
-                    <input class="form-control input-sm" type="text" name="search" placeholder="Search..." />
-
-                    <button type="submit" id="search-btn" class="btn"><i class="fa fa-search"></i></button>
-                </form>
-            </div> <!-- #search -->
-
-            <nav id="sidebar">
-
-                <ul id="main-nav" class="open-active">
-
-                    <li class="dropdown">
-                        <a href="javascript:;">
-                            <i class="fa fa-bug"></i>
-                            <span>Bug Management</span>
-                            <span class="caret"></span>
+            <!-- #section:basics/navbar.dropdown -->
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    @*<li class="purple">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <i class="ace-icon fa fa-bell icon-animated-bell"></i>
+                            <span class="badge badge-important">8</span>
                         </a>
 
-                        <ul class="sub-nav">
-                            <li><a href="@Url.Action("Index","Tickets")">Bugs</a></li>
-                            <li>@Html.ActionLink("New Ticket", "Create")</li>
+                        <ul class="dropdown-menu-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close">
+                            <li class="dropdown-header">
+                                <i class="ace-icon fa fa-exclamation-triangle"></i>
+                                8 Notifications
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <div class="clearfix">
+                                        <span class="pull-left">
+                                            <i class="btn btn-xs no-hover btn-pink fa fa-comment"></i>
+                                            New Comments
+                                        </span>
+                                        <span class="pull-right badge badge-info">+12</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <i class="btn btn-xs btn-primary fa fa-user"></i>
+                                    Bob just signed up as an editor ...
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <div class="clearfix">
+                                        <span class="pull-left">
+                                            <i class="btn btn-xs no-hover btn-success fa fa-shopping-cart"></i>
+                                            New Orders
+                                        </span>
+                                        <span class="pull-right badge badge-success">+8</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <div class="clearfix">
+                                        <span class="pull-left">
+                                            <i class="btn btn-xs no-hover btn-info fa fa-twitter"></i>
+                                            Followers
+                                        </span>
+                                        <span class="pull-right badge badge-info">+11</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li class="dropdown-footer">
+                                <a href="#">
+                                    See all notifications
+                                    <i class="ace-icon fa fa-arrow-right"></i>
+                                </a>
+                            </li>
                         </ul>
-
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="javascript:;">
-                            <i class="fa fa-file-powerpoint-o"></i>
-                            Manage Projects
-                            <span class="caret"></span>
-                        </a>
-
-                        <ul class="sub-nav">
-                            <li><a href="@Url.Action("Index","Projects")">Projects</a></li>
-                            <li>@Html.ActionLink("New Project", "Create")</li>
-                        </ul>
-
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="javascript:;">
-                            <i class="fa fa-group"></i>
-                            Manage Developers
-                            <span class="caret"></span>
-                        </a>
-
-                        <ul class="sub-nav">
-                            <li><a href="@Url.Action("Index","Users")">Developers</a></li>
-                        </ul>
-                    </li>
-
-                </ul>
-
-            </nav> <!-- #sidebar -->
-
-        </div> <!-- /#sidebar-wrapper -->
-
-
-        <div id="content">
-
-            <div id="content-header">
-                <h1>Dashboard</h1>
-            </div> <!-- #content-header -->
-            <div id="content-container">
-                @RenderBody()
-                <br />
-
-
-                <div class="row">
-
-                    <div class="col-md-12">
+                    </li>*@
 
                     
+
+                    <!-- #section:basics/navbar.user_menu -->
+                    @Html.Partial("_LoginPartial")
+                </ul>
+            </div>
+
+            <!-- /section:basics/navbar.dropdown -->
+        </div><!-- /.navbar-container -->
+    </div>
+
+    <!-- /section:basics/navbar.layout -->
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.check('main-container', 'fixed') } catch (e) { }
+        </script>
+
+        <!-- #section:basics/sidebar -->
+        <div id="sidebar" class="sidebar responsive  sidebar-fixed compact">
+            <script type="text/javascript">
+                try { ace.settings.check('sidebar', 'fixed') } catch (e) { }
+            </script>
+
+            @*<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+                <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                    <button class="btn btn-success">
+                        <i class="ace-icon fa fa-signal"></i>
+                    </button>
+
+                    <button class="btn btn-info">
+                        <i class="ace-icon fa fa-pencil"></i>
+                    </button>
+
+                    <!-- #section:basics/sidebar.layout.shortcuts -->
+                    <button class="btn btn-warning">
+                        <i class="ace-icon fa fa-users"></i>
+                    </button>
+
+                    <button class="btn btn-danger">
+                        <i class="ace-icon fa fa-cogs"></i>
+                    </button>
+
+                    <!-- /section:basics/sidebar.layout.shortcuts -->
+                </div>
+
+                <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+                    <span class="btn btn-success"></span>
+
+                    <span class="btn btn-info"></span>
+
+                    <span class="btn btn-warning"></span>
+
+                    <span class="btn btn-danger"></span>
+                </div>
+            </div>*@<!-- /.sidebar-shortcuts -->
+
+            <ul class="nav nav-list">
+                <li class="">
+                    <a href="#">
+                        <i class="menu-icon fa fa-tachometer"></i>
+                        <span class="menu-text"> Dashboard </span>
+                    </a>
+
+                    <b class="arrow"></b>
+                </li>
+                <li class="">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-bug"></i>
+                        <span class="menu-text"> Tickets </span>
+
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li class=""><a href="@Url.Action("Index", "Tickets")"> <i class="menu-icon fa fa-caret-right"></i> View Tickets</a></li>
+                        <li class=""><a href="@Url.Action("Create", "Tickets")"> <i class="menu-icon fa fa-caret-right"></i> Create Ticket</a></li>
+                    </ul>
+                </li>
+                @if(User.IsInRole("Administrator")){
+                <li class="">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-group"></i>
+                        <span class="menu-text"> User Manager </span>
+
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li class=""><a href="@Url.Action("Index", "Users")"> <i class="menu-icon fa fa-caret-right"></i> View Users</a></li>
+                    </ul>
+                </li>
+                }
+                @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager")) { 
+                <li class="">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="menu-icon fa fa-pencil-square-o"></i>
+                        <span class="menu-text"> Projects </span>
+
+                        <b class="arrow fa fa-angle-down"></b>
+                    </a>
+
+                    <b class="arrow"></b>
+                    <ul class="submenu">
+                        <li class=""><a href="@Url.Action("Index", "Projects")"> <i class="menu-icon fa fa-caret-right"></i> View Projects</a></li>
+                        <li class=""><a href="@Url.Action("Create", "Projects")"> <i class="menu-icon fa fa-caret-right"></i> Create Projects</a></li>
+                    </ul>
+                </li>
+                }
+            </ul><!-- /.nav-list -->
+            <!-- #section:basics/sidebar.layout.minimize -->
+            @*<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>*@
+
+            <!-- /section:basics/sidebar.layout.minimize -->
+            <script type="text/javascript">
+                try { ace.settings.check('sidebar', 'collapsed') } catch (e) { }
+            </script>
+        </div>
+
+        <!-- /section:basics/sidebar -->
+        <div class="main-content">
+            <!-- #section:basics/content.breadcrumbs -->
+            @*<div class="breadcrumbs" id="breadcrumbs">
+                <script type="text/javascript">
+                    try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+                </script>
+
+                <ul class="breadcrumb">
+                    <li>
+                        <i class="ace-icon fa fa-home home-icon"></i>
+                        <a href="#">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Other Pages</a>
+                    </li>
+                    <li class="active">Blank Page</li>
+                </ul><!-- /.breadcrumb -->
+                <!-- #section:basics/content.searchbox -->
+                <div class="nav-search" id="nav-search">
+                    <form class="form-search">
+                        <span class="input-icon">
+                            <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                            <i class="ace-icon fa fa-search nav-search-icon"></i>
+                        </span>
+                    </form>
+                </div><!-- /.nav-search -->
+                <!-- /section:basics/content.searchbox -->
+            </div>*@
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                <!-- #section:settings.box -->
+                <div class="ace-settings-container" id="ace-settings-container">
+                    <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
+                        <i class="ace-icon fa fa-cog bigger-150"></i>
                     </div>
-                </div> <!-- /.row -->
 
-            </div> <!-- /#content-container -->
+                    <div class="ace-settings-box clearfix" id="ace-settings-box">
+                        <div class="pull-left width-50">
+                            <!-- #section:settings.skins -->
+                            <div class="ace-settings-item">
+                                <div class="pull-left">
+                                    <select id="skin-colorpicker" class="hide">
+                                        <option data-skin="no-skin" value="#438EB9">#438EB9</option>
+                                        <option data-skin="skin-1" value="#222A2D" selected="selected">#222A2D</option>
+                                        <option data-skin="skin-2" value="#C6487E">#C6487E</option>
+                                        <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                                    </select>
+                                </div>
+                                <span>&nbsp; Choose Skin</span>
+                            </div>
 
+                            <!-- /section:settings.skins -->
+                            <!-- #section:settings.navbar -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-navbar" />
+                                <label class="lbl" for="ace-settings-navbar"> Fixed Navbar</label>
+                            </div>
 
-        </div> <!-- #content -->
-    </div> <!-- #wrapper -->
+                            <!-- /section:settings.navbar -->
+                            <!-- #section:settings.sidebar -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-sidebar" />
+                                <label class="lbl" for="ace-settings-sidebar"> Fixed Sidebar</label>
+                            </div>
 
-    <footer id="footer">
-        <ul class="nav pull-right">
-            <li>
-                2014 BuggerOff!
-            </li>
-        </ul>
-    </footer>
+                            <!-- /section:settings.sidebar -->
+                            <!-- #section:settings.breadcrumbs -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-breadcrumbs" />
+                                <label class="lbl" for="ace-settings-breadcrumbs"> Fixed Breadcrumbs</label>
+                            </div>
 
-    @RenderSection("scripts", required: false)
+                            <!-- /section:settings.breadcrumbs -->
+                            <!-- #section:settings.rtl -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-rtl" />
+                                <label class="lbl" for="ace-settings-rtl"> Right To Left (rtl)</label>
+                            </div>
 
-    <script src="~/js/libs/jquery-1.9.1.min.js"></script>
-    <script src="~/js/libs/jquery-ui-1.9.2.custom.min.js"></script>
-    <script src="~/js/libs/bootstrap.min.js"></script>
+                            <!-- /section:settings.rtl -->
+                            <!-- #section:settings.container -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-add-container" />
+                                <label class="lbl" for="ace-settings-add-container">
+                                    Inside
+                                    <b>.container</b>
+                                </label>
+                            </div>
 
-    <script src="~/js/plugins/icheck/jquery.icheck.min.js"></script>
-    <script src="~/js/plugins/select2/select2.js"></script>
-    <script src="~/js/plugins/tableCheckable/jquery.tableCheckable.js"></script>
+                            <!-- /section:settings.container -->
+                        </div><!-- /.pull-left -->
 
-    <script src="~/js/App.js"></script>
+                        <div class="pull-left width-50">
+                            <!-- #section:basics/sidebar.options -->
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-hover" />
+                                <label class="lbl" for="ace-settings-hover"> Submenu on Hover</label>
+                            </div>
 
-    <script src="~/js/libs/raphael-2.1.2.min.js"></script>
-    <script src="~/js/plugins/morris/morris.min.js"></script>
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-compact" />
+                                <label class="lbl" for="ace-settings-compact"> Compact Sidebar</label>
+                            </div>
 
-    <script src="~/js/demos/charts/morris/area.js"></script>
-    <script src="~/js/demos/charts/morris/donut.js"></script>
+                            <div class="ace-settings-item">
+                                <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-highlight" />
+                                <label class="lbl" for="ace-settings-highlight"> Alt. Active Item</label>
+                            </div>
 
-    <script src="~/js/plugins/sparkline/jquery.sparkline.min.js"></script>
+                            <!-- /section:basics/sidebar.options -->
+                        </div><!-- /.pull-left -->
+                    </div><!-- /.ace-settings-box -->
+                </div><!-- /.ace-settings-container -->
+                <!-- /section:settings.box -->
+                <div class="page-content-area">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            @RenderBody()
+                            <!-- PAGE CONTENT ENDS -->
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.page-content-area -->
+            </div><!-- /.page-content -->
+        </div><!-- /.main-content -->
 
-    <script src="~/js/plugins/fullcalendar/fullcalendar.min.js"></script>
-    <script src="~/js/demos/calendar.js"></script>
+        <div class="footer">
+            <div class="footer-inner">
+                <!-- #section:basics/footer -->
+                <div class="footer-content">
+                    <span class="bigger-120">
+                        BuggerOff! &copy; 2013-2014
+                    </span>
 
-    <script src="~/js/demos/dashboard.js"></script>
+                    &nbsp; &nbsp;
+                    <span class="action-buttons">
+                    </span>
+                </div>
 
+                <!-- /section:basics/footer -->
+            </div>
+        </div>
+
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
+    <!-- basic scripts -->
+    <!--[if !IE]> -->
+    <script type="text/javascript">
+        window.jQuery || document.write("<script src='/assets/js/jquery.min.js'>" + "<" + "/script>");
+    </script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script type="text/javascript">
+     window.jQuery || document.write("<script src='~/assets/js/jquery1x.min.js'>"+"<"+"/script>");
+    </script>
+    <![endif]-->
+    <script type="text/javascript">
+        if ('ontouchstart' in document.documentElement) document.write("<script src='../assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <!-- ace scripts -->
+    <script src="~/assets/js/ace-elements.min.js"></script>
+    <script src="~/assets/js/ace.min.js"></script>
+    @RenderSection("scripts", false)
 </body>
 </html>
