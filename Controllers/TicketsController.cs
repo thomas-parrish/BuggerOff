@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using BuggerOff.DataAccess;
 using Microsoft.AspNet.Identity;
 using System.Linq.Expressions;
+using BuggerOff.ViewModels;
 //using System.Linq.Dynamic;
 
 namespace BuggerOff.Controllers
@@ -35,31 +36,15 @@ namespace BuggerOff.Controllers
             }
         }
 
-        // GET: Tickets
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
-        public ActionResult Index(int? page, int? numPerPage, string sortBy, bool showCompleted = false, string search = "", string searchBy = "", bool ascending = true )
+        public ActionResult Index()
         {
-            var pageNumber = page ?? 1;
-            sortBy = sortBy ?? "PriorityId";
-            searchBy = searchBy ?? "TicketName";
-
-            //set ViewBag items to remember last view options
-            ViewBag.sortBy = sortBy;
-            ViewBag.Search = search;
-            ViewBag.ascending = ascending;
-            ViewBag.searchBy = searchBy;
-            ViewBag.showCompleted = showCompleted;
-
-            var currentPage = page ?? 1;
             var tickets = db.Tickets.Include(t => t.CreatedByUser).Include(t => t.AssignedToUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
 
-            //if the search string is not empty, add the corresponding where clause for search type
-            if (search != "")
-                tickets = searchQuery(tickets, search, searchBy);
 
             //If show completed is not checked, select only unresolved bugs
-            if (!showCompleted)
-                tickets = tickets.Where(m => m.Completed == null);
+            //if (!showCompleted)
+            //    tickets = tickets.Where(m => m.Completed == null);
             var currentUserId = User.Identity.GetUserId();
             if (!User.IsInRole("Administrator"))
             {
@@ -70,52 +55,111 @@ namespace BuggerOff.Controllers
                 }
             }
 
+            var ticketList = tickets.ToList();
+            var ticketViewList = new List<TicketViewModelShort>();
 
-            if (ascending)
+
+            foreach(var ticket in ticketList)
             {
-                //Sort ascending by sortBy
-                switch (sortBy.ToString())
+                ticketViewList.Add(new TicketViewModelShort()
                 {
-                    case "Created":
-                        return View(tickets.OrderBy(m => m.Created).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Updated":
-                        return View(tickets.OrderBy(m => m.Updated).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Completed":
-                        return View(tickets.OrderBy(m => m.Completed).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "CreatedBy":
-                        return View(tickets.OrderBy(m => m.CreatedByUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "AssignedTo":
-                        return View(tickets.OrderBy(m => m.AssignedToUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Project.Name":
-                        return View(tickets.OrderBy(m => m.Project.Name).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "PriorityId":
-                         default:
-                         return View(tickets.OrderBy(m => m.PriorityId).ToPagedList(pageNumber, numPerPage ?? 10));
-                }
+                    id = ticket.id, 
+                    Title = ticket.Title,
+                    StatusId = ticket.StatusId,
+                    Created = ticket.Created,
+                    CreatedBy = ticket.CreatedBy,
+                    isCompleted = (ticket.Completed != null),
+                    AssignedTo = ticket.AssignedTo,
+                    ProjectId = ticket.ProjectId,
+                    PriorityId = ticket.PriorityId,
+                    AssignedToUserId = ticket.AssignedTo
+                });
             }
-            else
-            {
-                //Sort descending by sortBy
-                switch (sortBy.ToString())
-                {
-                    case "Created":
-                        return View(tickets.OrderByDescending(m => m.Created).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Updated":
-                        return View(tickets.OrderByDescending(m => m.Updated).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Completed":
-                        return View(tickets.OrderByDescending(m => m.Completed).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "CreatedBy":
-                        return View(tickets.OrderByDescending(m => m.CreatedByUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "AssignedTo":
-                        return View(tickets.OrderByDescending(m => m.AssignedToUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "Project.Name":
-                        return View(tickets.OrderByDescending(m => m.Project.Name).ToPagedList(pageNumber, numPerPage ?? 10));
-                    case "PriorityId":
-                         default:
-                         return View(tickets.OrderByDescending(m => m.PriorityId).ToPagedList(pageNumber, numPerPage ?? 10));
-                }
-            }
+            return View(ticketViewList);
         }
+
+
+        // GET: Tickets
+        //[Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        //public ActionResult Index(int? page, int? numPerPage, string sortBy, bool showCompleted = false, string search = "", string searchBy = "", bool ascending = true )
+        //{
+        //    var pageNumber = page ?? 1;
+        //    sortBy = sortBy ?? "PriorityId";
+        //    searchBy = searchBy ?? "TicketName";
+
+        //    //set ViewBag items to remember last view options
+        //    ViewBag.sortBy = sortBy;
+        //    ViewBag.Search = search;
+        //    ViewBag.ascending = ascending;
+        //    ViewBag.searchBy = searchBy;
+        //    ViewBag.showCompleted = showCompleted;
+
+        //    var currentPage = page ?? 1;
+        //    var tickets = db.Tickets.Include(t => t.CreatedByUser).Include(t => t.AssignedToUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
+
+        //    //if the search string is not empty, add the corresponding where clause for search type
+        //    if (search != "")
+        //        tickets = searchQuery(tickets, search, searchBy);
+
+        //    //If show completed is not checked, select only unresolved bugs
+        //    if (!showCompleted)
+        //        tickets = tickets.Where(m => m.Completed == null);
+        //    var currentUserId = User.Identity.GetUserId();
+        //    if (!User.IsInRole("Administrator"))
+        //    {
+        //        tickets = tickets.Where(m => m.Project.AspNetUsers.Any(u => u.Id == currentUserId));
+        //        if (!User.IsInRole("Project Manager"))
+        //        {
+        //            tickets = tickets.Where(m => (m.AssignedToUser.Id == currentUserId) || (m.AssignedToUser == null));
+        //        }
+        //    }
+
+
+        //    if (ascending)
+        //    {
+        //        //Sort ascending by sortBy
+        //        switch (sortBy.ToString())
+        //        {
+        //            case "Created":
+        //                return View(tickets.OrderBy(m => m.Created).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Updated":
+        //                return View(tickets.OrderBy(m => m.Updated).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Completed":
+        //                return View(tickets.OrderBy(m => m.Completed).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "CreatedBy":
+        //                return View(tickets.OrderBy(m => m.CreatedByUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "AssignedTo":
+        //                return View(tickets.OrderBy(m => m.AssignedToUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Project.Name":
+        //                return View(tickets.OrderBy(m => m.Project.Name).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "PriorityId":
+        //                 default:
+        //                 return View(tickets.OrderBy(m => m.PriorityId).ToPagedList(pageNumber, numPerPage ?? 10));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //Sort descending by sortBy
+        //        switch (sortBy.ToString())
+        //        {
+        //            case "Created":
+        //                return View(tickets.OrderByDescending(m => m.Created).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Updated":
+        //                return View(tickets.OrderByDescending(m => m.Updated).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Completed":
+        //                return View(tickets.OrderByDescending(m => m.Completed).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "CreatedBy":
+        //                return View(tickets.OrderByDescending(m => m.CreatedByUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "AssignedTo":
+        //                return View(tickets.OrderByDescending(m => m.AssignedToUser.UserName).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "Project.Name":
+        //                return View(tickets.OrderByDescending(m => m.Project.Name).ToPagedList(pageNumber, numPerPage ?? 10));
+        //            case "PriorityId":
+        //                 default:
+        //                 return View(tickets.OrderByDescending(m => m.PriorityId).ToPagedList(pageNumber, numPerPage ?? 10));
+        //        }
+        //    }
+        //}
 
         // GET: Tickets/Details/5
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]

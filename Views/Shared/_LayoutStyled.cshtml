@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta charset="utf-8" />
-    <title>Blank Page - Ace Admin</title>
+    <title>BuggerOff!</title>
 
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
@@ -16,6 +16,7 @@
     <!-- text fonts -->
     <link rel="stylesheet" href="/assets/css/ace-fonts.css" />
     <link rel="stylesheet" href="/css/bugoff-icon.css" />
+    <link rel="stylesheet" href="/css/custom.css" />
 
     <!-- ace styles -->
     <link rel="stylesheet" href="/assets/css/ace.min.css" id="main-ace-style" />
@@ -430,9 +431,127 @@
     <script src="~/assets/js/bootstrap.min.js"></script>
 
     <!-- page specific plugin scripts -->
+    <script src="~/assets/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/jquery.dataTables.bootstrap.js"></script>
     <!-- ace scripts -->
     <script src="~/assets/js/ace-elements.min.js"></script>
     <script src="~/assets/js/ace.min.js"></script>
     @RenderSection("scripts", false)
+
+    @if(!User.Identity.IsAuthenticated)
+    { 
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content-login">
+                    <div class="widget widget-color-blue2">
+                        <div class="widget-header">
+                            <div class="row">
+                                <div class="h4 col-sm-3" style="width:20%; color:white; font-size:large;" id="loginTitle">
+                                    Login
+                                </div>
+                                <div class="h4 col-sm-6"style="color: red; width:60%; text-align:center; font-size:large; margin-top: 10px;">
+                                    <span id="loginError"></span>
+                                </div>
+                                <div id="loginLoading" class="col-sm-3" style="margin-top:10px; padding-right: 20px; width: 20%; text-align: right; display:none; ">
+                                    <i class="fa fa-spin fa-spinner" style="color:white; font-size:large;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-body">
+                            <div class="widget-main no-padding">
+                                <form novalidate="novalidate">
+                                    @Html.AntiForgeryToken()
+                                    <!-- <legend>Form</legend> -->
+                                    <fieldset>
+                                        <table class="" style="margin: 0 auto; border:0px;">
+                                            <tr>
+                                                <td>
+                                                    <label class="col-md-3 control-label" for="Email">Username</label>
+                                                </td>
+                                                <td>
+                                                    <input data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-required="The Email field is required." id="Email" name="Email" type="text" value="">
+                                                    <span class="text-danger field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="col-md-3 control-label" for="Password">Password</label>
+                                                </td>
+                                                <td>
+                                                    <input data-val="true" data-val-required="The Password field is required." id="Password" name="Password" type="password">
+                                                    <span class="text-danger field-validation-valid" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div class="center">
+                                            <input data-val="true" data-val-required="The Remember me? field is required." id="RememberMe" name="RememberMe" type="checkbox" value="true">
+                                            <input name="RememberMe" type="hidden" value="false">
+                                            <label for="RememberMe">Remember me?</label>
+                                        </div>
+                                    </fieldset>
+                                    
+                                    <div class="form-actions center">
+                                        <button type="button" class="btn btn-sm btn-success" id="submitLogin">
+                                            Log in
+                                            <i class="fa fa-sign-in bigger-110"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            var globalResult;
+            $('#submitLogin').click(function (event) {
+                event.preventDefault;
+
+                var data = { Email : $('#Email').val(), 
+                             Password : $('#Password').val(), 
+                             RememberMe : $('#RememberMe').val(),
+                             __RequestVerificationToken: $('[name = __RequestVerificationToken]').val()
+                            };
+
+                function resetLoginText(result)
+                {
+                    $('#loginTitle').html("Login");
+                    if (result.success)
+                        window.location = '@Url.Action("Index","Tickets")';
+                }
+
+                function onSuccess (result) {
+                    globalResult = result;
+
+                    //Animate login success/failure
+                    $('#loginTitle').html("");
+                    if (result.success) {
+                        $('#loginError').attr('style', 'color: white; width:60%; text-align:center; font-size:large; margin-top: 10px;');
+                        $('#loginLoading').show();
+                    }
+                    else
+                        $('#loginError').attr('style', 'color: red; width:60%; text-align:center; font-size:large; margin-top: 10px;');
+                    $('#loginError').show();
+                    $('#loginError').html(result.message);
+                    $('#loginError').fadeOut(2000, resetLoginText(result));
+                }
+
+                $.ajax({
+                    url: '@Url.Action("LoginHelper","Account")',
+                    type: 'POST',
+                    data: data,
+                    success: function (result) {
+                        globalResult = result;
+                        onSuccess(result);
+                    }
+                });
+            });
+        </script>
+        }
+        
 </body>
 </html>

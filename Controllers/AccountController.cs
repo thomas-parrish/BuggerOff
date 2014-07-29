@@ -41,36 +41,36 @@ namespace BuggerOff.Controllers
 
         //
         // GET: /Account/Login
-        [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
+        //[AllowAnonymous]
+        //public ActionResult Login(string returnUrl)
+        //{
+        //    ViewBag.ReturnUrl = returnUrl;
+        //    return View();
+        //}
 
         //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<JsonResult> LoginHelper(string Email, string Password, bool RememberMe, string returnUrl)
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindAsync(model.Email, model.Password);
+                var user = await UserManager.FindAsync(Email, Password);
                 if (user != null)
                 {
-                    await SignInAsync(user, model.RememberMe);
-                    return RedirectToLocal(returnUrl);
+                    await SignInAsync(user, RememberMe);
+                    return Json(new { success = true});
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Invalid username or password.");
+                    return Json(new { success = false, message = "Invalid Login" });
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return Json(new { success = false, message = "Unknown Error" });
         }
 
         //

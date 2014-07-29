@@ -45,7 +45,7 @@
         </a>
         <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
             <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+            <li><a href="#" id="loginLink" data-toggle="modal" data-target="#loginModal">Login</a></li>
         </ul>
     }
 </li>
