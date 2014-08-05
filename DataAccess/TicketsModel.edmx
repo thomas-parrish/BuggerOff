@@ -83,6 +83,16 @@
           <Property Name="Updated" Type="date" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
+        <EntityType Name="TicketComments">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ticketId" Type="int" Nullable="false" />
+          <Property Name="userId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="text" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="userName" Type="nvarchar" MaxLength="256" />
+        </EntityType>
         <EntityType Name="TicketHistories">
           <Key>
             <PropertyRef Name="id" />
@@ -216,6 +226,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TicketComments_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="TicketComments" Type="Self.TicketComments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TicketComments">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TicketComments_Tickets">
+          <End Role="Tickets" Type="Self.Tickets" Multiplicity="1" />
+          <End Role="TicketComments" Type="Self.TicketComments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tickets">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TicketComments">
+              <PropertyRef Name="ticketId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_TicketHistories_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="TicketHistories" Type="Self.TicketHistories" Multiplicity="*" />
@@ -309,6 +343,7 @@
           <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProjectsAspNetUsers" EntityType="Self.ProjectsAspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TicketAttachments" EntityType="Self.TicketAttachments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TicketComments" EntityType="Self.TicketComments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TicketHistories" EntityType="Self.TicketHistories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TicketPriorities" EntityType="Self.TicketPriorities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tickets" EntityType="Self.Tickets" Schema="dbo" store:Type="Tables" />
@@ -340,6 +375,14 @@
           <AssociationSet Name="FK_TicketAttachments_Tickets" Association="Self.FK_TicketAttachments_Tickets">
             <End Role="Tickets" EntitySet="Tickets" />
             <End Role="TicketAttachments" EntitySet="TicketAttachments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TicketComments_AspNetUsers" Association="Self.FK_TicketComments_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="TicketComments" EntitySet="TicketComments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TicketComments_Tickets" Association="Self.FK_TicketComments_Tickets">
+            <End Role="Tickets" EntitySet="Tickets" />
+            <End Role="TicketComments" EntitySet="TicketComments" />
           </AssociationSet>
           <AssociationSet Name="FK_TicketHistories_AspNetUsers" Association="Self.FK_TicketHistories_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -426,6 +469,7 @@
           <NavigationProperty Name="Tickets1" Relationship="Self.FK_Tickets_AspNetUsersCreatedBy" FromRole="AspNetUsers" ToRole="Tickets" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
           <NavigationProperty Name="Projects" Relationship="Self.ProjectsAspNetUsers" FromRole="AspNetUsers" ToRole="Projects" />
+          <NavigationProperty Name="TicketComments" Relationship="BuggerOffModel.FK_TicketComments_AspNetUsers" FromRole="AspNetUser" ToRole="TicketComment" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -492,6 +536,7 @@
           <NavigationProperty Name="TicketHistories" Relationship="Self.FK_TicketHistories_Tickets" FromRole="Tickets" ToRole="TicketHistories" />
           <NavigationProperty Name="TicketPriority" Relationship="Self.FK_Tickets_TicketPriorities" FromRole="Tickets" ToRole="TicketPriorities" />
           <NavigationProperty Name="TicketStatus" Relationship="Self.FK_Tickets_TicketStatuses1" FromRole="Tickets" ToRole="TicketStatuses" />
+          <NavigationProperty Name="TicketComments" Relationship="BuggerOffModel.FK_TicketComments_Tickets" FromRole="Ticket" ToRole="TicketComment" />
         </EntityType>
         <EntityType Name="TicketStatus">
           <Key>
@@ -692,7 +737,52 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Projects" EntitySet="Projects" />
           </AssociationSet>
+          <EntitySet Name="TicketComments" EntityType="BuggerOffModel.TicketComment" />
+          <AssociationSet Name="FK_TicketComments_AspNetUsers" Association="BuggerOffModel.FK_TicketComments_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="TicketComment" EntitySet="TicketComments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TicketComments_Tickets" Association="BuggerOffModel.FK_TicketComments_Tickets">
+            <End Role="Ticket" EntitySet="Tickets" />
+            <End Role="TicketComment" EntitySet="TicketComments" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="TicketComment">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ticketId" Type="Int32" Nullable="false" />
+          <Property Name="userId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="text" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="BuggerOffModel.FK_TicketComments_AspNetUsers" FromRole="TicketComment" ToRole="AspNetUser" />
+          <NavigationProperty Name="Ticket" Relationship="BuggerOffModel.FK_TicketComments_Tickets" FromRole="TicketComment" ToRole="Ticket" />
+          <Property Name="userName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_TicketComments_AspNetUsers">
+          <End Type="BuggerOffModel.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="BuggerOffModel.TicketComment" Role="TicketComment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TicketComment">
+              <PropertyRef Name="userId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TicketComments_Tickets">
+          <End Type="BuggerOffModel.Ticket" Role="Ticket" Multiplicity="1" />
+          <End Type="BuggerOffModel.TicketComment" Role="TicketComment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ticket">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TicketComment">
+              <PropertyRef Name="ticketId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -826,6 +916,17 @@
               <ScalarProperty Name="Id" ColumnName="ProjectId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="TicketComments">
+            <EntityTypeMapping TypeName="BuggerOffModel.TicketComment">
+              <MappingFragment StoreEntitySet="TicketComments">
+                <ScalarProperty Name="userName" ColumnName="userName" />
+                <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="userId" ColumnName="userId" />
+                <ScalarProperty Name="ticketId" ColumnName="ticketId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

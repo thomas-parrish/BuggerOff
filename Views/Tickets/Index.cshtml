@@ -1,126 +1,284 @@
 ﻿@using BuggerOff.ViewModels;
 @using BuggerOff.DataAccess;
-
+@using BuggerOff.Controllers;
+@using Mvc.JQuery.Datatables;
 @model IEnumerable<TicketViewModelShort>
-
+<link rel="stylesheet" href="~/assets/css/perfect-scrollbar.min.css" />
+<script src="~/assets/js/perfect-scrollbar.with-mousewheel.min.js"></script>
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Ticket Index";
 }
 
 @using PagedList.Mvc
 @using PagedList
 @using System.Web.Mvc
+<script src="~/Scripts/jquery.loadTemplate-1.4.4.min.js"></script>
 
 <div class="table-header">
 
-    <a class="btn btn-white btn-info" href="@Url.Action("Create", "Tickets")">
-        <i class="fa fa-plus-square"></i>
-        <span style="">
-            New Ticket
-        </span>
-    </a>
+
 </div>
+
 <div class="dataTables_wrapper table-responsive no-footer">
-    <table class="table table-striped table-bordered table-hover table-responsive dataTable no-footer" id="ticketTable">
+    <table id="Tickets" class="display table table-bordered table-striped dataTable no-footer" role="grid" aria-describedby="Tickets_info">
         <thead>
-            <tr>
-                <th>
-                    Status
-                </th>
-                <th>
-                    Project
-                </th>
-                <th>
-                    Title
-                </th>
-                <th>
-                    Priority
-                </th>
-                <th>
-                    Created
-                </th>
-
-                <th>
-                    Created By
-                </th>
-                <th>
-                    Assigned To
-                </th>
-
-                <th>
-                    Completed
-                </th>
-                <th>
-
-                </th>
-            </tr>
+            <tr role="row"><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Summary" style="width: 76px;">Summary</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Status" style="width: 52px;">Status</th><th class="sorting_desc" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Date Created: activate to sort column ascending" style="width: 136px;" aria-sort="descending">Date Created</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Submitted By" style="width: 169px;">Submitted By</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Assigned To: activate to sort column ascending" style="width: 169px;">Assigned To</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Project: activate to sort column ascending" style="width: 66px;">Project</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Closed: activate to sort column ascending" style="width: 63px;">Closed</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Actions" style="width: 248px;">Actions</th></tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-
-            var db = new BuggerOffEntities();
-
-            <tr>
-                <td>
-                    @db.TicketStatuses.Find(item.StatusId).Status
-                </td>
-                <td>
-                    @(item.ProjectId == null ? "" : db.Projects.Find(item.ProjectId).Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @db.TicketPriorities.Find(item.PriorityId).Priority
-                </td>
-                <td>
-                    @item.Created.ToLocalTime().DateTime.Date
-                </td>
-
-                <td>
-                    @db.AspNetUsers.Find(item.CreatedBy).UserName
-                </td>
-                <td>
-                    @(item.AssignedToUserId == null ? "" : db.AspNetUsers.Find(item.AssignedToUserId).UserName)
-                </td>
-
-                <td>
-                    @if (item.isCompleted == true)
-                    {
-                    <i class="fa fa-check"></i>
-                    }
-                </td>
-
-
-                <td style="text-align:center;">
-                        <a href="@Url.Action("Edit", new { id = item.id })" class="btn btn-sm btn-success">
-                            <i class="glyphicon glyphicon-edit"></i> Edit
-                        </a>
-
-                        <a href="@Url.Action("Details", new { id = item.id })" class="btn btn-sm btn-success">
-                            <i class="glyphicon glyphicon-plus-sign"></i> Details
-                        </a>
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <a href="@Url.Action("Delete", new { id = item.id })" class="btn btn-sm btn-danger">
-                                <i class="icon-flash-off"></i> Delete
-                            </a>
-                        }
-                </td>
-            </tr>
-            }
-        </tbody>
+         </tbody>
     </table>
+    
+    @*@{
+        var table = Html.DataTableVm("Tickets", (TicketsController t) => t.getTickets(null));
+        table.JsOptions.Add("aLengthMenu", new object[] { new[] { 10, 25, 250, -1 }, new object[] { 10, 25, 250, "All" } });
+        table.StateSave = true;
+    }
+    @Html.Partial("DataTable",table)*@
+
 </div>
 
+<div class="modal fade" id="detailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="padding:10px 10px 0px 10px;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="widget-box widget-color-blue" style="margin-top:0px;">
+                        <div class="widget-header" style="text-align:center; padding-left:0px;">
+                            <div style="float:left;"><i class="ace-icon fa fa-bug dark bigger-200" style="padding: 7px 0 0 10px;"></i></div>
+                            <h3 class="widget-title" id="projectTitle"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="widget-box widget-color-dark" style="height:100px;">
+                        <div class="widget-header">
+                            <h4 class="widget-title lighter smaller">
+                                <i class="ace-icon glyphicon glyphicon-info-sign smaller-90"></i>
+                                Description
+                            </h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main no-padding">
+                                <div class="wrapper" style="height:250px; overflow:hidden; position:absolute; margin-right:10px; padding-right:5px;" id="descriptionWrapper">
+                                    <div style="padding: 10px 10px 10px 10px;" id="description">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="widget-box widget-color-dark" style="height:200px;">
+                        <div class="widget-header">
+                            <h4 class="widget-title lighter smaller">
+                                <i class="ace-icon glyphicon glyphicon-list-alt smaller-90"></i>
+                                Details
+                            </h4>
+                        </div>
+                        <div class="widget-body" style="padding:10px;">
+                            <ul class="list-group list-unstyled" style="margin-bottom:0px;">
+                                <li><i class="ace-icon glyphicon glyphicon-exclamation-sign" style="padding-right: 5px;"></i><label>Status</label><span style="float:right;" id="detailsStatus"></span></li>
+                                <li><i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Created By</label><span style="float:right;" id="detailsCreatedBy"></span></li>
+                                <li><i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Assigned To</label><span style="float:right;" id="detailsAssignedTo"></span></li>
+                                <li><i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Submitted On</label><span style="float:right;" id="detailsSubmittedOn"></span></li>
+                                <li><i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Updated on</label><span style="float:right;" id="detailsUpdatedOn"></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="widget-box widget-color-dark" style="height:200px;">
+                        <div class="widget-header">
+                            <h4 class="widget-title lighter smaller">
+                                <i class="ace-icon glyphicon glyphicon-floppy-disk smaller-90"></i>
+                                Attachments
+                            </h4>
+                        </div>
+                        <div class="widget-body" style="padding:10px;">
+                            Attachments go here!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="widget-box widget-color-dark" style="height:300px;">
+                        <div class="widget-header">
+                            <h4 class="widget-title lighter smaller">
+                                <i class="ace-icon fa fa-comments-o"></i>
+                                Comments
+                            </h4>
+                        </div>
 
-
-
-
-
+                        <div class="widget-body">
+                            <div class="widget-main no-padding">
+                                <div class="wrapper" style="height:215px; overflow:hidden; position:relative;" id="commentAreaWrapper">
+                                    <div id="commentArea" style="padding: 10px 10px 10px 10px;">
+                                    </div>
+                                </div>
+                                <div style="width:100%;">
+                                    <div class="input-group" style="padding:0px 9px 9px 9px; width:100%;">
+                                        <input placeholder="Type your message here ..." type="text" class="form-control" name="message">
+                                        <span class="input-group-btn" style="width:1%">
+                                            <button class="btn btn-sm btn-info no-radius submitComment" data-ticketid="10" type="button">
+                                                <i class="ace-icon fa fa-share"></i>
+                                                Send
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div><!-- /.widget-main -->
+                            </div>
+                        </div><!-- /.widget-body -->
+                    </div><!-- /.widget-box -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
-    $(document).ready(function () {
-        $('#ticketTable').DataTable();
+    $(document).ready(function ($) {
+        $('#description').perfectScrollbar({
+            wheelSpeed: 20,
+            wheelPropagation: false,
+            includePadding: true
+        });
     });
+    $(document).ready(function ($) {
+        $('#commentAreaWrapper').perfectScrollbar({
+            wheelSpeed: 20,
+            wheelPropagation: false,
+            includePadding: true
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    function getDetails(id) {
+        $.ajax({
+            url: '@Url.Action("getTicketDetails","Tickets")',
+            type: 'POST',
+            data: id
+        }).done(function (result) {
+            var comments = [];
+            console.log(result);
+            for (var i = 0; i < result.details.comments.length; i++) {
+                //convert result comment list to area form for template use
+                comments.push({
+                    commentName: result.details.comments[i].userName,
+                    commentText: result.details.comments[i].text,
+                    commentId: result.details.comments[i].id
+                });
+            }
+            //Set the description, and load the comments into their respective divs
+            $('#projectTitle').text(result.ticket.ProjectName);
+
+            //Populate details lists
+            $('#detailsStatus').text(result.ticket.Status);
+            $('#detailsCreatedBy').text(result.ticket.CreatedBy);
+            $('#detailsAssignedTo').text((result.ticket.AssignedTo == null) ? "" : result.ticket.AssignedTo);
+            $('#detailsSubmittedOn').text(new Date(parseInt(result.ticket.Created.substr(6))).toDateString());
+            $('#detailsUpdatedOn').text((result.details.Updated == null) ? "" :new Date(parseInt(result.details.Updated.substr(6))).toDateString());
+
+            //populate description and comments
+            $("#description").html(result.details.Description);
+            $("#commentArea").loadTemplate($("#comment"), comments);
+            //Scroll to bottom
+            $("#commentArea"
+                ).scrollTop($("#commentArea").prop("scrollHeight"));
+            $("#commentArea").perfectScrollbar('update');
+        });
+    }
+
+
+    //Add expand/contract details
+    //If no details have been loaded yet, load them from database through ajax call
+    $('body').on('click', '.details', function () {
+        getDetails({ id: $(this).attr('data-ticketId') });
+    });
+
+    $('body').on('click', '.deleteComment', function () {
+        var commentId = $(this).parent().siblings('.commentId').html();
+        alert(commentId);
+    });
+
+    $('body').on('click', '.submitComment', function () {
+        var ticketId = $(this).data('ticketid');
+        var commentText = $(this).parent().prev('input').val();
+
+        if (commentText != null) {
+            var commentPostModel = {
+                ticketId: ticketId,
+                text: commentText
+            };
+
+            $.ajax({
+                url: '@Url.Action("addComment","Tickets")',
+                type: 'POST',
+                data: commentPostModel
+            })
+        }
+    });
+</script>
+
+<script type="text/html" id="blank">
+
+</script>
+
+<script type="text/html" id="comment">
+    <div class="itemdiv dialogdiv">
+        <div class="body" style="margin-left:8px;">
+            <div class="name" data-content="commentName">
+            </div>
+            <div class="text" data-content="commentText"></div>
+            <div class="commentId" data-content="commentId"></div>
+            <div class="tools">
+                <a href="#" class="btn btn-minier btn-info deleteComment">
+                    <i class="icon-only ace-icon fa fa-share"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/javascript">
+    $(document).ready((function setDataTable() {
+        if(!window.jQuery || !$.fn.DataTable) {
+            setTimeout(setDataTable, 100);
+            return;
+        }
+        var $table = $('#Tickets');
+        var dt = $table.dataTable({
+            "aaSorting": [],
+            "bProcessing": true,
+            "bStateSave": true,
+            "bServerSide": true,
+            "bFilter": true,
+            "dom": '<"#tableControls"lf>rtip',
+            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "sAjaxSource": "/Tickets/getTickets", 
+            "fnServerData": function(sSource, aoData, fnCallback) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
+            "aoColumnDefs" : [{"bSortable":false,"aTargets":[0,1,3,7]},{"bVisible":false,"aTargets":[8,9,10,11]},{"bSearchable":false,"aTargets":[1,7]}],
+            "aoSearchCols": [null,null,null,null,null,null,null,null,null,null,null,null]
+                , "aLengthMenu":[[10,25,250,-1],[10,25,250,"All"]]
+        });
+        $('#tableControls').addClass('table-header');
+        $('#Tickets_length').prepend($('#newButton').html());
+    }));
+    </script>
+<script type="text/html" id="newButton">
+    <a class="btn btn-white btn-info btn-sm" href="@Url.Action("Create", "Tickets")">
+        <i class="fa fa-plus-circle"></i>
+        New Ticket
+    </a>
 </script>

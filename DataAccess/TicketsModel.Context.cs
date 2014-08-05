@@ -35,5 +35,6 @@ namespace BuggerOff.DataAccess
         public virtual DbSet<TicketPriority> TicketPriorities { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<TicketStatus> TicketStatuses { get; set; }
+        public virtual DbSet<TicketComment> TicketComments { get; set; }
     }
 }

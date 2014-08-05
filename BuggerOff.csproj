@@ -43,8 +43,18 @@
       <HintPath>..\packages\Grid.Mvc.3.0.0\lib\net40\GridMvc.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mvc.JQuery.Datatables">
+      <HintPath>packages\Mvc.JQuery.Datatables.1.2.111\lib\net40\Mvc.JQuery.Datatables.dll</HintPath>
+    </Reference>
+    <Reference Include="Mvc.JQuery.Datatables.Templates">
+      <HintPath>packages\Mvc.JQuery.Datatables.Templates.1.2.111\lib\net40\Mvc.JQuery.Datatables.Templates.dll</HintPath>
+    </Reference>
     <Reference Include="MvcCheckBoxList">
       <HintPath>..\packages\MvcCheckBoxList.1.4.4.5\lib\net45\MvcCheckBoxList.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PagedList">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
@@ -117,9 +127,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -200,6 +207,9 @@
     <Compile Include="DataAccess\TicketAttachment.cs">
       <DependentUpon>TicketsModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataAccess\TicketComment.cs">
+      <DependentUpon>TicketsModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataAccess\TicketHistory.cs">
       <DependentUpon>TicketsModel.tt</DependentUpon>
     </Compile>
@@ -231,6 +241,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\RoleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegisterDatatablesModelBinder.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AdminEditUserViewModel.cs" />
     <Compile Include="ViewModels\EditProjectViewModel.cs" />
@@ -297,6 +308,7 @@
     <Content Include="assets\css\jquery-ui.custom.min.css" />
     <Content Include="assets\css\jquery-ui.min.css" />
     <Content Include="assets\css\jquery.gritter.css" />
+    <Content Include="assets\css\perfect-scrollbar.min.css" />
     <Content Include="assets\css\prettify.css" />
     <Content Include="assets\css\select2-spinner.gif" />
     <Content Include="assets\css\select2.css" />
@@ -525,6 +537,7 @@
     <Content Include="assets\js\markdown\bootstrap-markdown.min.js" />
     <Content Include="assets\js\markdown\markdown.min.js" />
     <Content Include="assets\js\markdown\to-markdown.min.js" />
+    <Content Include="assets\js\perfect-scrollbar.with-mousewheel.min.js" />
     <Content Include="assets\js\prettify.js" />
     <Content Include="assets\js\respond.min.js" />
     <Content Include="assets\js\select2.min.js" />
@@ -640,6 +653,7 @@
     <Content Include="Content\flash-off.svg" />
     <Content Include="Content\flashoff.svg" />
     <Content Include="Content\Gridmvc.css" />
+    <Content Include="Content\jquery.dataTables.columnFilter.js" />
     <Content Include="Content\OffIcon.png" />
     <Content Include="Content\PagedList.css" />
     <Content Include="css\animation.css" />
@@ -886,6 +900,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.loadTemplate-1.4.4.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -948,6 +963,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutStyled.cshtml" />
     <Content Include="Views\Tickets\indexbackup.cshtml" />
+    <Content Include="Views\Shared\DataTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

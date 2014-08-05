@@ -12,6 +12,7 @@ using BuggerOff.DataAccess;
 using Microsoft.AspNet.Identity;
 using System.Linq.Expressions;
 using BuggerOff.ViewModels;
+using Mvc.JQuery.Datatables;
 //using System.Linq.Dynamic;
 
 namespace BuggerOff.Controllers
@@ -36,15 +37,73 @@ namespace BuggerOff.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult getTicketDetails(int id)
+        {
+            TicketViewModelDetails details;
+            TicketViewModelShort ticketInfo;
+
+            var tickets = db.Tickets.Include(t => t.CreatedByUser).Include(t => t.AssignedToUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
+            
+            try
+            {
+                details = new TicketViewModelDetails(id);
+
+                ticketInfo = tickets.Where(t=>t.id==id).Select(ticket => new TicketViewModelShort()
+                {
+                    id = ticket.id,
+                    Title = ticket.Title,
+                    Status = ticket.TicketStatus.Status,
+                    Created = ticket.Created,
+                    CreatedBy = ticket.CreatedByUser.UserName,
+                    isCompleted = (ticket.Completed != null) ? "<i class=&quot;fa fa-check&quot;></i>" : "",
+                    AssignedTo = ticket.AssignedToUser.UserName,
+                    ProjectId = ticket.ProjectId,
+                    ProjectName = ticket.Project.Name,
+                    PriorityId = ticket.PriorityId,
+                    AssignedToUserId = ticket.AssignedTo,
+                }).FirstOrDefault();
+            }
+            catch(Exception e){
+                return Json(new { success = false, data = e.Message});
+            }
+
+            return Json(new { success = true, ticket = ticketInfo, details = details });
+            
+        }
+
+
+        [HttpPost]
+        public JsonResult addComment(CommentViewModel newComment)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentUser = db.AspNetUsers.Find(User.Identity.GetUserId());
+                var ticketAttachedTo = db.Tickets.Find(newComment.ticketId);
+                TicketComment comment = new TicketComment()
+                {
+                    AspNetUser = currentUser,
+                    userId = currentUser.Id,
+                    userName = currentUser.UserName,
+                    Ticket = ticketAttachedTo,
+                    ticketId = ticketAttachedTo.id,
+                    text = newComment.text,
+                };
+
+
+                db.TicketComments.Add(comment);
+                db.SaveChanges();
+            }
+            return Json(new { success = true });
+        }
+
+
+
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
-        public ActionResult Index()
+        public DataTablesResult<TicketViewModelShort> getTickets(DataTablesParam dataTableParam)
         {
             var tickets = db.Tickets.Include(t => t.CreatedByUser).Include(t => t.AssignedToUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
 
-
-            //If show completed is not checked, select only unresolved bugs
-            //if (!showCompleted)
-            //    tickets = tickets.Where(m => m.Completed == null);
             var currentUserId = User.Identity.GetUserId();
             if (!User.IsInRole("Administrator"))
             {
@@ -54,28 +113,43 @@ namespace BuggerOff.Controllers
                     tickets = tickets.Where(m => (m.AssignedToUser.Id == currentUserId) || (m.AssignedToUser == null));
                 }
             }
-
-            var ticketList = tickets.ToList();
-            var ticketViewList = new List<TicketViewModelShort>();
-
-
-            foreach(var ticket in ticketList)
+            var result = DataTablesResult.Create(tickets.Select(ticket => new TicketViewModelShort()
             {
-                ticketViewList.Add(new TicketViewModelShort()
+                id = ticket.id, 
+                Title = ticket.Title,
+                Status = ticket.TicketStatus.Status,
+                Created = ticket.Created,
+                CreatedBy = ticket.CreatedByUser.UserName,
+                isCompleted = ( ticket.Completed != null ) ? "<i class=&quot;fa fa-check&quot;></i>" : "",
+                AssignedTo = ticket.AssignedToUser.UserName ?? "",
+                ProjectId = ticket.ProjectId,
+                ProjectName = ticket.Project.Name ?? "",
+                PriorityId = ticket.PriorityId,
+                AssignedToUserId = ticket.AssignedTo ?? "",
+                }),
+                dataTableParam,
+                formatter => new
                 {
-                    id = ticket.id, 
-                    Title = ticket.Title,
-                    StatusId = ticket.StatusId,
-                    Created = ticket.Created,
-                    CreatedBy = ticket.CreatedBy,
-                    isCompleted = (ticket.Completed != null),
-                    AssignedTo = ticket.AssignedTo,
-                    ProjectId = ticket.ProjectId,
-                    PriorityId = ticket.PriorityId,
-                    AssignedToUserId = ticket.AssignedTo
-                });
-            }
-            return View(ticketViewList);
+                    buttons = "<a href=" + @Url.Action("Edit", new { id = formatter.id }) + " class=\"btn btn-sm btn-success\">" +
+                                    "<i class=&quot;glyphicon glyphicon-edit&quot;></i> Edit" +
+                                "</a>" +
+                                "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-ticketId=\"" + formatter.id + "\"" +
+                                    "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
+                                    "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
+                                "</a>" +
+                                ((User.IsInRole("Administrator")) ?
+                                "<a href=" + @Url.Action("Delete", new { id = formatter.id }) + " class=\"btn btn-sm btn-danger\">" +
+                                    "<i class=\"icon-flash-off\"></i> Delete" +
+                                "</a>" : "")
+                }
+            );
+            return result;
+        }
+
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        public ActionResult Index()
+        {
+            return View();
         }
 
 

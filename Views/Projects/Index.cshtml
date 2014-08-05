@@ -9,56 +9,59 @@
     ViewBag.Title = "Index";
 }
 
-
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table" id="projectTable">
-    <thead>
-        <tr>
-            <th>
-               Project Name
-            </th>
-            <th>
-                Tickets
-            </th>
-            <th>
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
+<div class="dataTables_wrapper table-responsive no-footer">
+    <table class="table table-bordered table-striped dataTable no-footer" id="projectTable">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.projectName)
-                </td>
-                <td>
-                    <a href="@Url.Action("../Tickets/Index", new { Search = item.projectName, ascending = ViewBag.ascending, searchBy = "Project" })">@item.numTickets</a>
-                </td>
-                <td class="col-md-3">
-                    <div class="input-group-btn">
-                        <a href="@Url.Action("Edit", new { id = item.projectId })" class="btn btn-success">
-                            <i class="glyphicon glyphicon-edit"></i> Edit
-                        </a>
-                        <a href="@Url.Action("Details", new { id = item.projectId })" class="btn btn-success">
-                            <i class="glyphicon glyphicon-plus-sign"></i> Details
-                        </a>
-                        <a href="@Url.Action("Delete", new { id = item.projectId })" class="btn btn-danger">
-                            <i class="icon-flash-off"></i> Delete
-                        </a>
-                    </div>
-                </td>
+                <th>
+                    Project Name
+                </th>
+                <th>
+                    Tickets
+                </th>
+                <th>
+                    Actions
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<script>
-    $(document).ready(function () {
-        $('#projectTable').DataTable();
-    });
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.projectName)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("../Tickets/Index", new { Search = item.projectName, ascending = ViewBag.ascending, searchBy = "Project" })">@item.numTickets</a>
+                    </td>
+                    <td class="col-md-3">
+                        <div class="input-group-btn">
+                            <a href="@Url.Action("Edit", new { id = item.projectId })" class="btn btn-success">
+                                <i class="glyphicon glyphicon-edit"></i> Edit
+                            </a>
+                            <a href="@Url.Action("Details", new { id = item.projectId })" class="btn btn-success">
+                                <i class="glyphicon glyphicon-plus-sign"></i> Details
+                            </a>
+                            <a href="@Url.Action("Delete", new { id = item.projectId })" class="btn btn-danger">
+                                <i class="icon-flash-off"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    <script>
+        $(document).ready(function () {
+            $('#projectTable').DataTable({ "dom": '<"#tableControls"lf>rtip' });
+            $('#tableControls').addClass('table-header');
+            $('#projectTable_length').prepend($('#newButton').html());
+        });
+    </script>
+<script type="text/html" id="newButton">
+    <a class="btn btn-white btn-info btn-sm" href="@Url.Action("Create", "Projects")">
+        <i class="fa fa-plus-circle"></i>
+        New Project
+    </a>
 </script>

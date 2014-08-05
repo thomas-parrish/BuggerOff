@@ -23,6 +23,7 @@ namespace BuggerOff.DataAccess
             this.Tickets1 = new HashSet<Ticket>();
             this.AspNetRoles = new HashSet<AspNetRole>();
             this.Projects = new HashSet<Project>();
+            this.TicketComments = new HashSet<TicketComment>();
         }
     
         public string Id { get; set; }
@@ -45,5 +46,6 @@ namespace BuggerOff.DataAccess
         public virtual ICollection<Ticket> Tickets1 { get; set; }
         public virtual ICollection<AspNetRole> AspNetRoles { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<TicketComment> TicketComments { get; set; }
     }
 }

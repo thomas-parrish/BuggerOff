@@ -61,7 +61,7 @@ namespace BuggerOff.Controllers
                 if (user != null)
                 {
                     await SignInAsync(user, RememberMe);
-                    return Json(new { success = true});
+                    return Json(new { success = true, message = ""});
                 }
                 else
                 {

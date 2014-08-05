@@ -14,3 +14,20 @@
     margin: 0 auto; 
     font-weight:bold;
 }
+
+.itemdiv.dialogdiv:before {
+    display:none;
+}
+
+.commentId {
+    display:none;
+}
+
+.dataTables_length {
+    display:inline;
+}
+
+.dataTables_filter {
+    display:inline;
+    float:right;
+}

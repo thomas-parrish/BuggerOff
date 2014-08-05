@@ -1,7 +1,73 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<link rel="stylesheet" href="~/assets/css/perfect-scrollbar.min.css" />
+<script src="~/assets/js/perfect-scrollbar.with-mousewheel.min.js"></script>
 
-<div class="row">
-
+<div class="col-sm-5 widget-container-col ui-sortable">
+    <div class="widget-box widget-color-dark ui-sortable-handle" style="height:300px;">
+        <div class="widget-header widget-hea1der-small">
+            <h6 class="widget-title">Description</h6>
+            <div class="widget-toolbar">
+                <a href="#" data-action="reload">
+                    <i class="ace-icon fa fa-refresh"></i>
+                </a>
+            </div>
+        </div>
+        <div class="widget-body" style="display: block;">
+            <div class="widget-main no-padding" >
+                <div class="wrapper" style="height:250px; overflow:hidden; position:absolute; margin-right:10px; padding-right:5px;" id="descriptionWrapper">
+                    <div style="padding: 10px 10px 10px 10px;" id="description">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<div class="col-sm-7">
+    <div class="widget-box widget-color-dark" style="height:300px;">
+        <div class="widget-header">
+            <h4 class="widget-title lighter smaller">
+                <i class="ace-icon fa fa-comment blue"></i>
+                Comments
+            </h4>
+        </div>
+
+        <div class="widget-body">
+            <div class="widget-main no-padding">
+                <div class="wrapper" style="height:215px; overflow:hidden; position:relative;" id="commentAreaWrapper">
+                    <div id="commentArea" style="padding: 10px 10px 10px 10px;">
+                    </div>
+                </div>
+                <div style="width:100%;">
+                    <div class="input-group" style="padding:0px 9px 9px 9px; width:100%;">
+                        <input placeholder="Type your message here ..." type="text" class="form-control" name="message">
+                        <span class="input-group-btn" style="width:1%">
+                            <button class="btn btn-sm btn-info no-radius submitComment" data-ticketid="10" type="button">
+                                <i class="ace-icon fa fa-share"></i>
+                                Send
+                            </button>
+                        </span>
+                    </div>
+                </div><!-- /.widget-main -->
+            </div>
+        </div><!-- /.widget-body -->
+    </div><!-- /.widget-box -->
+</div>
+
+<script>
+    $(document).ready(function ($) {
+        $('#description').perfectScrollbar({
+            wheelSpeed: 20,
+            wheelPropagation: false,
+            includePadding: true
+        });
+    });
+    $(document).ready(function ($) {
+        $('#commentAreaWrapper').perfectScrollbar({
+            wheelSpeed: 20,
+            wheelPropagation: false,
+            includePadding: true
+        });
+    });
+</script>
