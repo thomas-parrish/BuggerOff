@@ -149,6 +149,8 @@ namespace BuggerOff.Controllers
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult Index()
         {
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
 

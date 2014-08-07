@@ -5,42 +5,23 @@ using System.Web;
 using BuggerOff.DataAccess;
 using PagedList;
 using PagedList.Mvc;
+using Mvc.JQuery.Datatables;
 
 namespace BuggerOff.ViewModels
 {
-    public class ProjectViewModelItem
-    {
-        public int numTickets { get; set; }
-        public int projectId { get; set; }
-        public string projectName { get; set; }
-
-        public ProjectViewModelItem()
-        {
-        }
-    }
-
-
     public class ProjectViewModel
     {
+        [DataTables(DisplayName = "Project Name", Searchable = true, Sortable = true)]
+        public string projectName { get; set; }
 
-        List<ProjectViewModelItem> projectItems { get; set; }
+        [DataTables(DisplayName = "Number of Tickets", Searchable = false, Sortable = false)]
+        public int numTickets { get; set; }
 
-        public ProjectViewModel()
-        {
-            BuggerOffEntities db = new BuggerOffEntities();
-            projectItems = new List<ProjectViewModelItem>();
+        [DataTables(DisplayName = "Actions", Searchable = false, Sortable = false)]
+        public string buttons { get; set; }
 
-            var projectList = db.Projects.ToList();
-
-            foreach(var item in projectList)
-            {
-                projectItems.Add(new ProjectViewModelItem() { projectId = item.Id, projectName = item.Name, numTickets = item.Tickets.Count });
-            }
-        }
-
-        public IPagedList ToPagedList(int page, int numPerPage)
-        {
-            return projectItems.ToPagedList(page, numPerPage);
-        }
+        [DataTables(Visible = false)]
+        public int projectId { get; set; }
     }
+
 }

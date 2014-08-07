@@ -2,63 +2,61 @@
 @using BuggerOff.DataAccess;
 @using PagedList;
 @using PagedList.Mvc;
+@using Mvc.JQuery.Datatables;
+@using BuggerOff.Controllers;
 
-@model IPagedList<ProjectViewModelItem>
+@model IPagedList<ProjectViewModel>
 
 @{
     ViewBag.Title = "Index";
 }
 
 <div class="dataTables_wrapper table-responsive no-footer">
-    <table class="table table-bordered table-striped dataTable no-footer" id="projectTable">
+    <table id="Projects" class="display table table-bordered table-striped table-responsive dataTable no-footer" role="grid" aria-describedby="Projects_info">
         <thead>
-            <tr>
-                <th>
-                    Project Name
-                </th>
-                <th>
-                    Tickets
-                </th>
-                <th>
-                    Actions
-                </th>
+            <tr role="row">
+                <th class="sorting" tabindex="0" aria-controls="Projects" rowspan="1" colspan="1" aria-label="Assigned To: activate to sort column ascending">Project Name</th>
+                <th class="sorting_disabled">Number of Tickets</th>
+                <th class="sorting_disabled" id="actions">Actions</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.projectName)
-                    </td>
-                    <td>
-                        <a href="@Url.Action("../Tickets/Index", new { Search = item.projectName, ascending = ViewBag.ascending, searchBy = "Project" })">@item.numTickets</a>
-                    </td>
-                    <td class="col-md-3">
-                        <div class="input-group-btn">
-                            <a href="@Url.Action("Edit", new { id = item.projectId })" class="btn btn-success">
-                                <i class="glyphicon glyphicon-edit"></i> Edit
-                            </a>
-                            <a href="@Url.Action("Details", new { id = item.projectId })" class="btn btn-success">
-                                <i class="glyphicon glyphicon-plus-sign"></i> Details
-                            </a>
-                            <a href="@Url.Action("Delete", new { id = item.projectId })" class="btn btn-danger">
-                                <i class="icon-flash-off"></i> Delete
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
+        <tbody></tbody>
     </table>
 </div>
-    <script>
-        $(document).ready(function () {
-            $('#projectTable').DataTable({ "dom": '<"#tableControls"lf>rtip' });
-            $('#tableControls').addClass('table-header');
-            $('#projectTable_length').prepend($('#newButton').html());
+
+<script type="text/javascript">
+    (function setDataTable() {
+        if (!window.jQuery || !$.fn.DataTable) {
+            setTimeout(setDataTable, 100);
+            return;
+        }
+        var $table = $('#Projects');
+        var dt = $table.dataTable({
+            "aaSorting": [],
+            "bProcessing": true,
+            "bStateSave": true,
+            "bServerSide": true,
+            "bFilter": true,
+            "dom": '<"#tableControls"lf>rtip',
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "bAutoWidth": false,
+            "sAjaxSource": "/Projects/getProjects",
+            "fnServerData": function (sSource, aoData, fnCallback) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            }
         });
-    </script>
+        $('#tableControls').addClass('table-header');
+        $('#Projects_length').prepend($('#newButton').html());
+        //$('#actions').width(0,)
+    })();
+</script>
+
 <script type="text/html" id="newButton">
     <a class="btn btn-white btn-info btn-sm" href="@Url.Action("Create", "Projects")">
         <i class="fa fa-plus-circle"></i>

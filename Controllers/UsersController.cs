@@ -20,6 +20,8 @@ namespace BuggerOff.Controllers
         public ActionResult Index(int? page)
         {
             var pageNumber = page ?? 1;
+            if (Request.IsAjaxRequest())
+                return PartialView(new UserViewModel().ToPagedList(pageNumber, 10));
             return View(new UserViewModel().ToPagedList(pageNumber, 10));
         }
 

@@ -10,6 +10,8 @@ namespace BuggerOff.Controllers
     {
         public ActionResult Index()
         {
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
 

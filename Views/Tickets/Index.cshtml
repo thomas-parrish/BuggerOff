@@ -14,15 +14,19 @@
 @using System.Web.Mvc
 <script src="~/Scripts/jquery.loadTemplate-1.4.4.min.js"></script>
 
-<div class="table-header">
-
-
-</div>
-
 <div class="dataTables_wrapper table-responsive no-footer">
-    <table id="Tickets" class="display table table-bordered table-striped dataTable no-footer" role="grid" aria-describedby="Tickets_info">
+    <table id="Tickets" class="display table table-bordered table-striped table-responsive dataTable no-footer" role="grid" aria-describedby="Tickets_info">
         <thead>
-            <tr role="row"><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Summary" style="width: 76px;">Summary</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Status" style="width: 52px;">Status</th><th class="sorting_desc" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Date Created: activate to sort column ascending" style="width: 136px;" aria-sort="descending">Date Created</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Submitted By" style="width: 169px;">Submitted By</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Assigned To: activate to sort column ascending" style="width: 169px;">Assigned To</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Project: activate to sort column ascending" style="width: 66px;">Project</th><th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Closed: activate to sort column ascending" style="width: 63px;">Closed</th><th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Actions" style="width: 248px;">Actions</th></tr>
+            <tr role="row">
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Summary" >Summary</th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Status" >Status</th>
+                <th class="sorting_desc" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Date Created: activate to sort column ascending"  aria-sort="descending">Date Created</th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Submitted By" >Submitted By</th>
+                <th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Assigned To: activate to sort column ascending" >Assigned To</th>
+                <th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Project: activate to sort column ascending" >Project</th>
+                <th class="sorting" tabindex="0" aria-controls="Tickets" rowspan="1" colspan="1" aria-label="Closed: activate to sort column ascending" >Closed</th>
+                <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="Actions" >Actions</th>
+            </tr>
         </thead>
         <tbody>
          </tbody>

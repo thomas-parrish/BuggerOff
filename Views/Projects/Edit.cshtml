@@ -6,22 +6,29 @@
 @{
     ViewBag.Title = "Edit";
 }
-
-<h2>Edit</h2>
-
-
 <form id="EditProject">
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Project</h4>
-        <hr />
         @Html.HiddenFor(m=>m.ProjectId)
         <!--><input type="hidden" id="ProjectId" /></!-->
         <div class="form-group">
-            <input type="text" class="input-lg" id="ProjectName" />
-            <ul id="userList" class="list-group"></ul>
-            <button type="button" id="theButton" class="btn-success">Sumbit</button>
+            <div class="row" style="margin: 5px;">
+                <div class="col-xs-12 text-center table-header" style="margin-bottom:10px;">
+                    <h2>Edit Project</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-xs-offset-2">
+                    <label for="projectName">Project Name</label><br/>
+                    <input type="text" class="input-lg" id="ProjectName" />
+                </div>
+                <div class="col-xs-4">
+                    <label for="userList">Project Members</label><br/>
+                    <ul id="userList" class="list-group" style="margin:0;"></ul>
+                    <button type="button" id="theButton" class="btn-success" style="margin-top:10px; float:right;">Sumbit</button>
+                </div>
+            </div>
         </div>
     </div>
 </form>
@@ -48,9 +55,7 @@
                 data: JSON.stringify(ViewModelData),
                 dataType: "json",
                 //traditional: true,
-                contentType: "application/json; charset=utf-8",
-                success: function () { alert("Success!"); },
-                error: function () { alert("An error has occured!!!"); }
+                contentType: "application/json; charset=utf-8"
             });
 
         });

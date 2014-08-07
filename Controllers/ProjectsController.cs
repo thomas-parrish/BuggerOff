@@ -12,6 +12,7 @@ using BuggerOff.ViewModels;
 using PagedList;
 using PagedList.Mvc;
 using BuggerOff.ViewModels;
+using Mvc.JQuery.Datatables;
 
 namespace BuggerOff.Controllers
 {
@@ -21,11 +22,50 @@ namespace BuggerOff.Controllers
 
         // GET: Projects
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
-        public ActionResult Index(int? page)
+        public ActionResult Index()
         {
-            var pageNumber = page ?? 1;
-            return View(new ProjectViewModel().ToPagedList(pageNumber, 10));
+            if (Request.IsAjaxRequest())
+                return PartialView();
+            return View();
         }
+
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        public DataTablesResult<ProjectViewModel> getProjects(DataTablesParam dataTableParam)
+        {
+            var projects = db.Projects.AsQueryable();
+
+            var currentUserId = User.Identity.GetUserId();
+            if (!User.IsInRole("Administrator"))
+            {
+                projects = projects.Where(m => m.AspNetUsers.Any(u => u.Id == currentUserId));
+            }
+            var result = DataTablesResult.Create(projects.Select(project => new ProjectViewModel()
+            {
+                projectName = project.Name,
+                numTickets = project.Tickets.Count,
+                buttons = "",
+                projectId = project.Id
+            }),
+                dataTableParam,
+                formatter => new
+                {
+                    buttons = "<a href=" + @Url.Action("Edit", new { id = formatter.projectId }) + " class=\"btn btn-sm btn-success\">" +
+                                    "<i class=&quot;glyphicon glyphicon-edit&quot;></i> Edit" +
+                                "</a>" +
+                                "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-ticketId=\"" + formatter.projectId + "\"" +
+                                    "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
+                                    "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
+                                "</a>" +
+                                ((User.IsInRole("Administrator")) ?
+                                "<a href=" + @Url.Action("Delete", new { id = formatter.projectId }) + " class=\"btn btn-sm btn-danger\">" +
+                                    "<i class=\"icon-flash-off\"></i> Delete" +
+                                "</a>" : "")
+                }
+            );
+            return result;
+        }
+
+
 
         // GET: Projects/Details/5
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
@@ -47,6 +87,8 @@ namespace BuggerOff.Controllers
         [Authorize(Roles = "Administrator, Project Manager")]
         public ActionResult Create()
         {
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
 
@@ -95,7 +137,9 @@ namespace BuggerOff.Controllers
                     IsSelected = user.Projects.Any(x=>x.Id == id),
                     PreviouslySelected = user.Projects.Any(x=>x.Id == id)
                 });
-            
+
+            if (Request.IsAjaxRequest())
+                return PartialView(ViewModel);
             return View(ViewModel);
         }
         [Authorize(Roles = "Administrator, Project Manager")]

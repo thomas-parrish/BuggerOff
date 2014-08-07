@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
-<li class="light-blue">
+<li class="">
 
     @if (Request.IsAuthenticated)
     {
@@ -24,7 +24,7 @@
             <span>
                 @User.Identity.GetUserName()
             </span>
-            <i class="ace-icon fa fa-caret-down"></i>
+            <i class="ace-icon fa fa-caret-down red"></i>
         </a>
         
         <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
