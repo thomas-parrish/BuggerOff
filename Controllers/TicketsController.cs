@@ -261,6 +261,8 @@ namespace BuggerOff.Controllers
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
             ViewBag.PriorityId = new SelectList(db.TicketPriorities, "Id", "Priority");
             ViewBag.StatusId = new SelectList(db.TicketStatuses, "Id", "Status");
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
 
@@ -306,6 +308,8 @@ namespace BuggerOff.Controllers
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.PriorityId = new SelectList(db.TicketPriorities, "Id", "Priority", ticket.PriorityId);
             ViewBag.StatusId = new SelectList(db.TicketStatuses, "Id", "Status", ticket.StatusId);
+            if (Request.IsAjaxRequest())
+                return PartialView(ticket);
             return View(ticket);
         }
 
@@ -329,6 +333,8 @@ namespace BuggerOff.Controllers
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.PriorityId = new SelectList(db.TicketPriorities, "Id", "Priority", ticket.PriorityId);
             ViewBag.StatusId = new SelectList(db.TicketStatuses, "Id", "Status", ticket.StatusId);
+            if (Request.IsAjaxRequest())
+                return PartialView(ticket);
             return View(ticket);
         }
 
@@ -345,6 +351,8 @@ namespace BuggerOff.Controllers
             {
                 return HttpNotFound();
             }
+            if (Request.IsAjaxRequest())
+                return PartialView(ticket);
             return View(ticket);
         }
 

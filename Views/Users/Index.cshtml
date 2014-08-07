@@ -47,7 +47,7 @@
             @item.email
         </td>
         <td>
-            @item.roles.First()
+            @item.roles.FirstOrDefault()
         </td>
         <td>
             <a href="@Url.Action("../Tickets/Index", new { Search = item.userName, ascending = ViewBag.ascending, searchBy = "AssignedTo" })">@item.numTickets</a>
