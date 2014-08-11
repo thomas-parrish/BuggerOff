@@ -17,15 +17,15 @@ namespace BuggerOff.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
+            if (Request.IsAjaxRequest())
+                return PartialView();
             return View();
         }
     }

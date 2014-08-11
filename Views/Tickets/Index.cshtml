@@ -41,6 +41,14 @@
 
 </div>
 
+<div class="modal fade" id="fileUploadPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="padding:10px 10px 0px 10px;">
+            Hi!
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="detailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="padding:10px 10px 0px 10px;">
@@ -101,9 +109,51 @@
                                 <i class="ace-icon glyphicon glyphicon-floppy-disk smaller-90"></i>
                                 Attachments
                             </h4>
+                            <div class="widget-toolbar">
+                                <div class="progress progress-mini progress-striped active pos-rel" style="width:100px;" data-percent="61%">
+                                    <div class="progress-bar progress-bar-danger" style="width:61%"></div>
+                                </div>
+                                <a href="#" id="uploadFileButton">
+                                    <i class="fa fa-upload white"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="widget-body" style="padding:10px;">
-                            Attachments go here!
+                        <div id="attachmentWidget" class="widget-body" style="padding:10px; position:relative; height:159px; overflow-y:hidden; overflow-x:hidden;">
+                            <div id="fileUploadWidget" class="collapse collapsed" style="">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <form id="uploadForm" name="form" enctype="multipart/form-data" method="post" action="@Url.Action("uploadAttachment")">
+                                            <input type="hidden" name="ticketId" id="ticketId" />
+                                            <label for="uploadDescription">Description</label>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <textarea name="uploadDescription" id="uploadDescription" rows="2" cols="40" style="width:100%;"></textarea>
+                                                </div>
+                                            </div>
+                                            <table class="table-responsive">
+                                                <tr>
+                                                    <td>
+                                                        <span class="btn btn-sm btn-file">
+                                                            <span id="browse">Browse… </span>
+                                                            <input type="file" name="attachment" id="attachment" />
+                                                        </span>
+                                                    </td>
+                                                    <td style="width:400px;">
+                                                        <input type="text" id="fileUploadText" readonly="" class="form-control" style="width:100%;">
+                                                    </td>
+                                                    <td>
+                                                        <span id="upload" class="btn btn-sm hidden">Upload</span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div id="attachmentArea" class="collapse in">
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,17 +195,27 @@
 </div>
 <script>
     $(document).ready(function ($) {
+        $('#attachmentWidget').perfectScrollbar({
+            wheelSpeed: 20,
+            wheelPropagation: false,
+            includePadding: true,
+            suppressScrollX : true
+        });
+    });
+    $(document).ready(function ($) {
         $('#description').perfectScrollbar({
             wheelSpeed: 20,
             wheelPropagation: false,
-            includePadding: true
+            includePadding: true,
+            suppressScrollX : true
         });
     });
     $(document).ready(function ($) {
         $('#commentAreaWrapper').perfectScrollbar({
             wheelSpeed: 20,
             wheelPropagation: false,
-            includePadding: true
+            includePadding: true,
+            suppressScrollX : true
         });
     });
 </script>
@@ -168,7 +228,7 @@
             data: id
         }).done(function (result) {
             var comments = [];
-            console.log(result);
+            var attachments = [];
             for (var i = 0; i < result.details.comments.length; i++) {
                 //convert result comment list to area form for template use
                 comments.push({
@@ -177,6 +237,16 @@
                     commentId: result.details.comments[i].id
                 });
             }
+            for (var i = 0; i < result.details.attachments.length; i++) {
+                attachments.push({
+                    attachmentId: result.details.attachments[i].id,
+                    attachmentDescription: result.details.attachments[i].description,
+                    attachmentUrl: result.details.attachments[i].url,
+                    attachmentFilename: result.details.attachments[i].filename
+                });
+            }
+            
+            console.log(result);
             //Set the description, and load the comments into their respective divs
             $('#projectTitle').text(result.ticket.ProjectName);
 
@@ -186,23 +256,79 @@
             $('#detailsAssignedTo').text((result.ticket.AssignedTo == null) ? "" : result.ticket.AssignedTo);
             $('#detailsSubmittedOn').text(new Date(parseInt(result.ticket.Created.substr(6))).toDateString());
             $('#detailsUpdatedOn').text((result.details.Updated == null) ? "" :new Date(parseInt(result.details.Updated.substr(6))).toDateString());
+            $('#ticketId').val(id.id);
 
-            //populate description and comments
+
+            //populate description, comments, and attachments
             $("#description").html(result.details.Description);
             $("#commentArea").loadTemplate($("#comment"), comments);
+            $("#attachmentArea").loadTemplate($("#attachmentTemplate"), attachments);
             //Scroll to bottom
-            $("#commentArea"
-                ).scrollTop($("#commentArea").prop("scrollHeight"));
+            $("#commentArea").scrollTop($("#commentArea").prop("scrollHeight"));
             $("#commentArea").perfectScrollbar('update');
         });
     }
 
+    //Attach collapse button to file upload modal
+    $('#uploadFileButton').on('click', function (e) {
+        e.preventDefault();
+        $('#fileUploadWidget').collapse('toggle');
+        $('#attachmentArea').collapse('toggle');
+    });
 
+
+    //Upload 
+    $(document).on('change', '#attachment', function () {
+        var input = $(this),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', label);
+    });
+
+    $('#attachment').on('fileselect', function (event, label) {
+        var input = $('#fileUploadText')
+        if (input.length) {
+            input.val(label);
+            $('#upload').removeClass('hidden');
+        }
+    });
+    
     //Add expand/contract details
     //If no details have been loaded yet, load them from database through ajax call
     $('body').on('click', '.details', function () {
         getDetails({ id: $(this).attr('data-ticketId') });
     });
+
+    function scrollMe(divId, scrollTo) {
+        var destination = element.offset().bottom;
+        element.animate({ scrollTop: destination }, 500, function () { console.log(divId.scrollTop()); });
+        return false;
+    }
+    //Add ajax submit file call to upload button
+    $('body').on('click', '#upload', function (event) {
+        event.preventDefault();
+
+        var form = new FormData($('#uploadForm')[0]);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("uploadAttachment")',
+            data: form,
+            processData: false,
+            contentType: false,
+            error: function (jqXHR, textStatus, errorMessage) {
+                console.log(errorMessage); // Optional
+            },
+            success: function (data) {  }
+        });
+        //Reset the form, hide upload button and collapse upload form
+        getDetails({ id: $('#ticketId').val() });
+        $('.ps-container').scrollTop(100).perfectScrollbar('update');
+        $('#uploadForm')[0].reset();
+        $('#upload').addClass('hidden');
+        $('#fileUploadWidget').collapse('toggle');
+        $('#attachmentArea').collapse('toggle');
+ 
+    });
+    
 
     $('body').on('click', '.deleteComment', function () {
         var commentId = $(this).parent().siblings('.commentId').html();
@@ -247,6 +373,16 @@
         </div>
     </div>
 </script>
+
+<script type="text/html" id="attachmentTemplate">
+    <div class="itemdiv">
+        <a href="" data-href="attachmentUrl" data-content="attachmentFilename"></a>
+        <div data-content="attachmentDescription">
+
+        </div>
+    </div>
+</script>
+
 <script type="text/javascript">
     $(document).ready((function setDataTable() {
         if(!window.jQuery || !$.fn.DataTable) {

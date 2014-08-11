@@ -4,9 +4,13 @@ using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using System.Net;
 using System.Linq.Expressions;
 using Mvc.JQuery.Datatables;
 using BuggerOff.DataAccess;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace BuggerOff.ViewModels
 {
@@ -90,15 +94,32 @@ namespace BuggerOff.ViewModels
         }
     }
 
+    public class AttachmentViewModel
+    {
+        public int? id { get; set; }
+        public string description { get; set; }
+        public string url { get; set; }
+        public string filename { get; set; }
+
+        public AttachmentViewModel(TicketAttachment attachment)
+        {
+            id = attachment.id;
+            description = attachment.Description;
+            url = ("/Uploads/" + attachment.TicketID.ToString() + '/' + attachment.FilenameMd5 + attachment.Filename);
+            filename = attachment.Filename;
+        }
+    }
+
     public class TicketViewModelDetails
     {
         public string Description { get; set; }
         public Nullable<System.DateTimeOffset> Updated { get; set; }
         public Nullable<System.DateTimeOffset> Completed { get; set; }
 
-        //Attachments
+        
         //History
         public List<CommentViewModel> comments { get; set; }
+        public List<AttachmentViewModel> attachments { get; set; }
 
         public TicketViewModelDetails(int id)
         {
@@ -122,11 +143,17 @@ namespace BuggerOff.ViewModels
             Completed = ticket.Completed;
 
             comments = new List<CommentViewModel>();
+            attachments = new List<AttachmentViewModel>();
 
             var commentList = ticket.TicketComments.ToList();
+            var attachmentList = ticket.TicketAttachments.ToList();
 
             foreach(var comment in commentList){
                 comments.Add(new CommentViewModel(comment));
+            }
+            foreach (var attachment in attachmentList)
+            {
+                attachments.Add(new AttachmentViewModel(attachment));
             }
         }
 

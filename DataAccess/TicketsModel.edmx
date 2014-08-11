@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="BuggerOffModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="BuggerOffModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -79,9 +79,11 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TicketID" Type="int" Nullable="false" />
           <Property Name="AddedBy" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Created" Type="date" Nullable="false" />
-          <Property Name="Updated" Type="date" Nullable="false" />
+          <Property Name="Created" Type="datetimeoffset" Precision="7" Nullable="false" />
+          <Property Name="Updated" Type="datetimeoffset" Precision="7" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Filename" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="FilenameMd5" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="TicketComments">
           <Key>
@@ -481,18 +483,6 @@
           <NavigationProperty Name="Tickets" Relationship="Self.FK_Tickets_Projects" FromRole="Projects" ToRole="Tickets" />
           <NavigationProperty Name="AspNetUsers" Relationship="Self.ProjectsAspNetUsers" FromRole="Projects" ToRole="AspNetUsers" />
         </EntityType>
-        <EntityType Name="TicketAttachment">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TicketID" Type="Int32" Nullable="false" />
-          <Property Name="AddedBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Updated" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Ticket" Relationship="Self.FK_TicketAttachments_Tickets" FromRole="TicketAttachments" ToRole="Tickets" />
-        </EntityType>
         <EntityType Name="TicketHistory">
           <Key>
             <PropertyRef Name="id" />
@@ -532,11 +522,11 @@
           <NavigationProperty Name="AssignedToUser" Relationship="Self.FK_Tickets_AspNetUsersAssignedTo" FromRole="Tickets" ToRole="AspNetUsers" />
           <NavigationProperty Name="CreatedByUser" Relationship="Self.FK_Tickets_AspNetUsersCreatedBy" FromRole="Tickets" ToRole="AspNetUsers" />
           <NavigationProperty Name="Project" Relationship="Self.FK_Tickets_Projects" FromRole="Tickets" ToRole="Projects" />
-          <NavigationProperty Name="TicketAttachments" Relationship="Self.FK_TicketAttachments_Tickets" FromRole="Tickets" ToRole="TicketAttachments" />
           <NavigationProperty Name="TicketHistories" Relationship="Self.FK_TicketHistories_Tickets" FromRole="Tickets" ToRole="TicketHistories" />
           <NavigationProperty Name="TicketPriority" Relationship="Self.FK_Tickets_TicketPriorities" FromRole="Tickets" ToRole="TicketPriorities" />
           <NavigationProperty Name="TicketStatus" Relationship="Self.FK_Tickets_TicketStatuses1" FromRole="Tickets" ToRole="TicketStatuses" />
           <NavigationProperty Name="TicketComments" Relationship="BuggerOffModel.FK_TicketComments_Tickets" FromRole="Ticket" ToRole="TicketComment" />
+          <NavigationProperty Name="TicketAttachments" Relationship="BuggerOffModel.FK_TicketAttachments_Tickets" FromRole="Ticket" ToRole="TicketAttachment" />
         </EntityType>
         <EntityType Name="TicketStatus">
           <Key>
@@ -622,18 +612,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TicketAttachments_Tickets">
-          <End Role="Tickets" Type="Self.Ticket" Multiplicity="1" />
-          <End Role="TicketAttachments" Type="Self.TicketAttachment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Tickets">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="TicketAttachments">
-              <PropertyRef Name="TicketID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_TicketHistories_Tickets">
           <End Role="Tickets" Type="Self.Ticket" Multiplicity="1" />
           <End Role="TicketHistories" Type="Self.TicketHistory" Multiplicity="*" />
@@ -684,7 +662,6 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
           <EntitySet Name="Projects" EntityType="Self.Project" />
-          <EntitySet Name="TicketAttachments" EntityType="Self.TicketAttachment" />
           <EntitySet Name="TicketHistories" EntityType="Self.TicketHistory" />
           <EntitySet Name="TicketPriorities" EntityType="Self.TicketPriority" />
           <EntitySet Name="Tickets" EntityType="Self.Ticket" />
@@ -712,10 +689,6 @@
           <AssociationSet Name="FK_Tickets_Projects" Association="Self.FK_Tickets_Projects">
             <End Role="Projects" EntitySet="Projects" />
             <End Role="Tickets" EntitySet="Tickets" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TicketAttachments_Tickets" Association="Self.FK_TicketAttachments_Tickets">
-            <End Role="Tickets" EntitySet="Tickets" />
-            <End Role="TicketAttachments" EntitySet="TicketAttachments" />
           </AssociationSet>
           <AssociationSet Name="FK_TicketHistories_Tickets" Association="Self.FK_TicketHistories_Tickets">
             <End Role="Tickets" EntitySet="Tickets" />
@@ -745,6 +718,11 @@
           <AssociationSet Name="FK_TicketComments_Tickets" Association="BuggerOffModel.FK_TicketComments_Tickets">
             <End Role="Ticket" EntitySet="Tickets" />
             <End Role="TicketComment" EntitySet="TicketComments" />
+          </AssociationSet>
+          <EntitySet Name="TicketAttachments" EntityType="BuggerOffModel.TicketAttachment" />
+          <AssociationSet Name="FK_TicketAttachments_Tickets" Association="BuggerOffModel.FK_TicketAttachments_Tickets">
+            <End Role="Ticket" EntitySet="Tickets" />
+            <End Role="TicketAttachment" EntitySet="TicketAttachments" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="TicketComment">
@@ -780,6 +758,32 @@
             </Principal>
             <Dependent Role="TicketComment">
               <PropertyRef Name="ticketId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TicketAttachment">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TicketID" Type="Int32" Nullable="false" />
+          <Property Name="AddedBy" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Created" Type="DateTimeOffset" Nullable="false" Precision="7" />
+          <Property Name="Updated" Type="DateTimeOffset" Precision="7" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Filename" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="FilenameMd5" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Ticket" Relationship="BuggerOffModel.FK_TicketAttachments_Tickets" FromRole="TicketAttachment" ToRole="Ticket" />
+        </EntityType>
+        <Association Name="FK_TicketAttachments_Tickets">
+          <End Type="BuggerOffModel.Ticket" Role="Ticket" Multiplicity="1" />
+          <End Type="BuggerOffModel.TicketAttachment" Role="TicketAttachment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Ticket">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="TicketAttachment">
+              <PropertyRef Name="TicketID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -840,18 +844,6 @@
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TicketAttachments">
-            <EntityTypeMapping TypeName="BuggerOffModel.TicketAttachment">
-              <MappingFragment StoreEntitySet="TicketAttachments">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="TicketID" ColumnName="TicketID" />
-                <ScalarProperty Name="AddedBy" ColumnName="AddedBy" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="Updated" ColumnName="Updated" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -923,6 +915,20 @@
                 <ScalarProperty Name="text" ColumnName="text" />
                 <ScalarProperty Name="userId" ColumnName="userId" />
                 <ScalarProperty Name="ticketId" ColumnName="ticketId" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TicketAttachments">
+            <EntityTypeMapping TypeName="BuggerOffModel.TicketAttachment">
+              <MappingFragment StoreEntitySet="TicketAttachments">
+                <ScalarProperty Name="FilenameMd5" ColumnName="FilenameMd5" />
+                <ScalarProperty Name="Filename" ColumnName="Filename" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Updated" ColumnName="Updated" />
+                <ScalarProperty Name="Created" ColumnName="Created" />
+                <ScalarProperty Name="AddedBy" ColumnName="AddedBy" />
+                <ScalarProperty Name="TicketID" ColumnName="TicketID" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>

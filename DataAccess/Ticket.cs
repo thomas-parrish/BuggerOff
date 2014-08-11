@@ -16,9 +16,9 @@ namespace BuggerOff.DataAccess
     {
         public Ticket()
         {
-            this.TicketAttachments = new HashSet<TicketAttachment>();
             this.TicketHistories = new HashSet<TicketHistory>();
             this.TicketComments = new HashSet<TicketComment>();
+            this.TicketAttachments = new HashSet<TicketAttachment>();
         }
     
         public int id { get; set; }
@@ -36,10 +36,10 @@ namespace BuggerOff.DataAccess
         public virtual AspNetUser AssignedToUser { get; set; }
         public virtual AspNetUser CreatedByUser { get; set; }
         public virtual Project Project { get; set; }
-        public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
         public virtual ICollection<TicketHistory> TicketHistories { get; set; }
         public virtual TicketPriority TicketPriority { get; set; }
         public virtual TicketStatus TicketStatus { get; set; }
         public virtual ICollection<TicketComment> TicketComments { get; set; }
+        public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
     }
 }

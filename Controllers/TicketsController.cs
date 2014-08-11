@@ -14,6 +14,8 @@ using System.Linq.Expressions;
 using BuggerOff.ViewModels;
 using Mvc.JQuery.Datatables;
 //using System.Linq.Dynamic;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace BuggerOff.Controllers
 {
@@ -366,6 +368,42 @@ namespace BuggerOff.Controllers
             db.Tickets.Remove(ticket);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        [ValidateAntiForgeryToken]
+        public ActionResult getAttachments(int ticketId)
+        {
+            return Json("");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        public ActionResult uploadAttachment(int ticketId, string uploadDescription, HttpPostedFileBase attachment)
+        {
+            var filenameMd5 = string.Concat(MD5CryptoServiceProvider.Create().ComputeHash(attachment.InputStream).Select(x => x.ToString("X2")));
+
+            var ticketAttachment = new TicketAttachment()
+            {
+                Description = uploadDescription,
+                AddedBy = User.Identity.GetUserId(),
+                FilenameMd5 = filenameMd5,
+                Filename = attachment.FileName,
+                Created = DateTimeOffset.UtcNow,
+                TicketID = ticketId,
+                Ticket = db.Tickets.Find(ticketId)
+            };
+
+            var uploadPath = Server.MapPath("~/Uploads/" + ticketId.ToString() + '/');
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            attachment.SaveAs(uploadPath + filenameMd5 + attachment.FileName);
+            db.TicketAttachments.Add(ticketAttachment);
+            db.SaveChanges();
+
+            return Json(ticketId);
         }
 
         protected override void Dispose(bool disposing)

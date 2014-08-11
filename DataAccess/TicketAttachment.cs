@@ -17,9 +17,11 @@ namespace BuggerOff.DataAccess
         public int id { get; set; }
         public int TicketID { get; set; }
         public string AddedBy { get; set; }
-        public System.DateTime Created { get; set; }
-        public System.DateTime Updated { get; set; }
+        public System.DateTimeOffset Created { get; set; }
+        public Nullable<System.DateTimeOffset> Updated { get; set; }
         public string Description { get; set; }
+        public string Filename { get; set; }
+        public string FilenameMd5 { get; set; }
     
         public virtual Ticket Ticket { get; set; }
     }
