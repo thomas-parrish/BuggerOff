@@ -399,7 +399,7 @@
       background-color: #FF0000;
   }
   .myskin .sidebar.h-sidebar {
-    background-color: #f8f8f8;
+    background-color: #20353C;
   }
   .myskin .sidebar.h-sidebar:before {
     background-color: #e4e4e4;
@@ -625,7 +625,7 @@
   .myskin .sidebar.h-sidebar .nav-list > li.highlight.active:hover > a:before {
     display: none;
   }
-}
+
     .myskin .sidebar.h-sidebar .nav-list > li > a:after {
     content:"";
     display:block;
@@ -648,9 +648,15 @@
     border: 8px solid transparent;
     border-width: 14px 10px;
     }
+    .myskin .sidebar.h-sidebar .nav-list > li:not(.active):hover > a {
+        background-color: #FCFCFC;
+    }
+    .myskin .sidebar.h-sidebar .nav-list > li:not(.active):hover > a:after  {
+        bottom: 0px!important;
+    }
 
 
-
+}
 .btn-file {
     position: relative;
     overflow: hidden;

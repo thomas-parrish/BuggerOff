@@ -2,7 +2,7 @@
 @using BuggerOff.DataAccess;
 @using BuggerOff.Controllers;
 @using Mvc.JQuery.Datatables;
-@model IEnumerable<TicketViewModelShort>
+@model Ticket
 <link rel="stylesheet" href="~/assets/css/perfect-scrollbar.min.css" />
 <script src="~/assets/js/perfect-scrollbar.with-mousewheel.min.js"></script>
 @{
@@ -31,99 +31,119 @@
         <tbody>
          </tbody>
     </table>
-    
-    @*@{
-        var table = Html.DataTableVm("Tickets", (TicketsController t) => t.getTickets(null));
-        table.JsOptions.Add("aLengthMenu", new object[] { new[] { 10, 25, 250, -1 }, new object[] { 10, 25, 250, "All" } });
-        table.StateSave = true;
-    }
-    @Html.Partial("DataTable",table)*@
-
-</div>
-
-<div class="modal fade" id="fileUploadPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="padding:10px 10px 0px 10px;">
-            Hi!
-        </div>
-    </div>
 </div>
 
 <div class="modal fade" id="detailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="padding:10px 10px 0px 10px;">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="widget-box widget-color-blue" style="margin-top:0px;">
-                        <div class="widget-header" style="text-align:center; padding-left:0px;">
-                            <div style="float:left;"><i class="ace-icon fa fa-bug dark bigger-200" style="padding: 7px 0 0 10px;"></i></div>
-                            <h3 class="widget-title" id="projectTitle"></h3>
+            <form id="detailsForm" action="@Url.Action("updateDetails","Tickets")">
+                <input type="hidden" name="id" id="ticketId" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="widget-box" style="margin-top:0px;">
+                            <div class="widget-header table-header" style="text-align:center; padding-left:0px; background-image:none;">
+                                <div style="float:left;"><i class="ace-icon fa fa-bug dark bigger-200" style="padding: 7px 0 0 10px;"></i></div>
+                                <h3 class="widget-title" id="title" style="color:white;"></h3>
+                                <input type="text" class="input-sm detailsEditor" id="titleEditor" name="Title" style="width:70%;" />
+                                <span class="widget-toolbar">
+                                    <a href="#" class="editField" id="detailsEdit">
+                                        <i class="ace-icon fa fa-pencil white"></i>
+                                    </a>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="widget-box widget-color-dark" style="height:100px;">
-                        <div class="widget-header">
-                            <h4 class="widget-title lighter smaller">
-                                <i class="ace-icon glyphicon glyphicon-info-sign smaller-90"></i>
-                                Description
-                            </h4>
-                        </div>
-                        <div class="widget-body">
-                            <div class="widget-main no-padding">
-                                <div class="wrapper" style="height:250px; overflow:hidden; position:absolute; margin-right:10px; padding-right:5px;" id="descriptionWrapper">
-                                    <div style="padding: 10px 10px 10px 10px;" id="description">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="widget-box widget-color-red" style="height:150px;">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon glyphicon glyphicon-info-sign smaller-90"></i>
+                                    Description
+                                </h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="row" style="height:109px;">
+                                    <div class="col-xs-12" style="margin: 10px 10px 10px 10px;" id="description"></div>
+                                    <div class="col-xs-12">
+                                        <textarea rows=" 2" class="detailsEditor" cols="130" style="border:none; resize:none; width:100%; height:100%;" name="description" id="descriptionTextEditor"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="widget-box widget-color-dark" style="height:200px;">
-                        <div class="widget-header">
-                            <h4 class="widget-title lighter smaller">
-                                <i class="ace-icon glyphicon glyphicon-list-alt smaller-90"></i>
-                                Details
-                            </h4>
-                        </div>
-                        <div class="widget-body" style="padding:10px;">
-                            <ul class="list-group list-unstyled" style="margin-bottom:0px;">
-                                <li><i class="ace-icon glyphicon glyphicon-exclamation-sign" style="padding-right: 5px;"></i><label>Status</label><span style="float:right;" id="detailsStatus"></span></li>
-                                <li><i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Created By</label><span style="float:right;" id="detailsCreatedBy"></span></li>
-                                <li><i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Assigned To</label><span style="float:right;" id="detailsAssignedTo"></span></li>
-                                <li><i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Submitted On</label><span style="float:right;" id="detailsSubmittedOn"></span></li>
-                                <li><i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Updated on</label><span style="float:right;" id="detailsUpdatedOn"></span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="widget-box widget-color-dark" style="height:200px;">
-                        <div class="widget-header">
-                            <h4 class="widget-title lighter smaller">
-                                <i class="ace-icon glyphicon glyphicon-floppy-disk smaller-90"></i>
-                                Attachments
-                            </h4>
-                            <div class="widget-toolbar">
-                                <div class="progress progress-mini progress-striped active pos-rel" style="width:100px;" data-percent="61%">
-                                    <div class="progress-bar progress-bar-danger" style="width:61%"></div>
-                                </div>
-                                <a href="#" id="uploadFileButton">
-                                    <i class="fa fa-upload white"></i>
-                                </a>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-blue" style="height:220px;">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon glyphicon glyphicon-list-alt smaller-90"></i>
+                                    Details
+                                </h4>
+                            </div>
+                            <div class="widget-body" style="padding:10px;">
+                                <ul class="list-group list-unstyled" style="margin-bottom:0px;">
+                                    <li>
+                                        <i class="ace-icon glyphicon glyphicon-exclamation-sign" style="padding-right: 5px;"></i><label>Project</label>
+                                        <span style="float:right;" id="detailsProject"></span>
+                                        @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class="detailsEditor", @style = "float:right; height:25px; width: 45%; padding:2px;", @id = "detailsProjectEditor" })
+                                    </li>
+
+                                    <li>
+                                        <i class="ace-icon glyphicon glyphicon-exclamation-sign" style="padding-right: 5px;"></i><label>Status</label>
+                                        <span style="float:right;" id="detailsStatus"></span>
+                                        @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+                                        {
+                                            @Html.DropDownList("StatusId", null, htmlAttributes: new { @class="detailsEditor", @style = "float:right; height:25px; width: 45%; padding:2px;", @id = "detailsStatusEditor" })
+                                        }
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Created By</label>
+                                        <span style="float:right;" id="detailsCreatedBy"></span>
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Assigned To</label>
+                                        <span style="float:right;" id="detailsAssignedTo"></span>
+                                        @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
+                                        {
+                                            <select style="float:right; height:25px; width: 45%; padding:2px;" class="detailsEditor" name="AssignedToUser" id="detailsAssignedToEditor"></select>
+                                        }
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Submitted On</label>
+                                        <span style="float:right;" id="detailsSubmittedOn"></span>
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-calendar-o" style="padding-right: 5px;"></i><label>Updated on</label>
+                                        <span style="float:right;" id="detailsUpdatedOn"></span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                        <div id="attachmentWidget" class="widget-body" style="padding:10px; position:relative; height:159px; overflow-y:hidden; overflow-x:hidden;">
-                            <div id="fileUploadWidget" class="collapse collapsed" style="">
-                                <div class="input-group">
-                                    <div class="input-group-btn">
-                                        <form id="uploadForm" name="form" enctype="multipart/form-data" method="post" action="@Url.Action("uploadAttachment")">
-                                            <input type="hidden" name="ticketId" id="ticketId" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-orange" style="height:220px;">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon glyphicon glyphicon-floppy-disk smaller-90"></i>
+                                    Attachments
+                                </h4>
+                                <div class="widget-toolbar">
+                                    <div class="progress progress-mini progress-striped active pos-rel" style="width:100px;" data-percent="61%">
+                                        <div class="progress-bar progress-bar-danger" style="width:61%"></div>
+                                    </div>
+                                    <a href="#" id="uploadFileButton">
+                                        <i class="fa fa-upload white"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="attachmentWidget" class="widget-body" style="padding:10px; position:relative; height:159px; overflow-y:hidden; overflow-x:hidden;">
+                                <div id="fileUploadWidget" class="collapse collapsed" style="">
+                                    <div class="input-group">
+                                        <div class="input-group-btn">
                                             <label for="uploadDescription">Description</label>
                                             <div class="row">
                                                 <div class="col-xs-12">
@@ -146,217 +166,90 @@
                                                     </td>
                                                 </tr>
                                             </table>
-                                        </form>
+                                        </div>
                                     </div>
-                                    
                                 </div>
-                            </div>
-                            <div id="attachmentArea" class="collapse in">
+                                <div id="attachmentArea" class="collapse in">
 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+            </form>
+            <div class="row" id="submitEditToolbar">
                 <div class="col-sm-12">
-                    <div class="widget-box widget-color-dark" style="height:300px;">
-                        <div class="widget-header">
-                            <h4 class="widget-title lighter smaller">
-                                <i class="ace-icon fa fa-comments-o"></i>
-                                Comments
-                            </h4>
-                        </div>
-
-                        <div class="widget-body">
-                            <div class="widget-main no-padding">
-                                <div class="wrapper" style="height:215px; overflow:hidden; position:relative;" id="commentAreaWrapper">
-                                    <div id="commentArea" style="padding: 10px 10px 10px 10px;">
-                                    </div>
-                                </div>
-                                <div style="width:100%;">
-                                    <div class="input-group" style="padding:0px 9px 9px 9px; width:100%;">
-                                        <input placeholder="Type your message here ..." type="text" class="form-control" name="message">
-                                        <span class="input-group-btn" style="width:1%">
-                                            <button class="btn btn-sm btn-info no-radius submitComment" data-ticketid="10" type="button">
-                                                <i class="ace-icon fa fa-share"></i>
-                                                Send
-                                            </button>
-                                        </span>
-                                    </div>
-                                </div><!-- /.widget-main -->
-                            </div>
-                        </div><!-- /.widget-body -->
-                    </div><!-- /.widget-box -->
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
+                            Cancel
+                        </a>
+                        <a href="#" class="btn btn-sm btn-primary" id="submitEdit">
+                            Submit
+                        </a>
+                    </div>
                 </div>
             </div>
+            <div class="row" id="submitCreateToolbar">
+                <div class="col-sm-12">
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-danger" id="cancelCreate">
+                            Cancel
+                        </a>
+                        <a href="#" class="btn btn-sm btn-primary" id="submitCreate">
+                            Submit
+                        </a>
+                    </div>
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="widget-box widget-color-green" style="height:300px;" id="commentsWidget">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon fa fa-comments-o"></i>
+                                    Comments
+                                </h4>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main no-padding">
+                                    <div class="wrapper" style="height:215px; overflow:hidden; position:relative;" id="commentAreaWrapper">
+                                        <div id="commentArea" style="padding: 10px 10px 10px 10px;">
+                                        </div>
+                                    </div>
+                                    <div style="width:100%;">
+                                        <div class="input-group" style="padding:0px 9px 9px 9px; width:100%;">
+                                            <input placeholder="Type your message here ..." type="text" class="form-control" name="message">
+                                            <span class="input-group-btn" style="width:1%">
+                                                <button class="btn btn-sm btn-info no-radius submitComment" data-ticketid="" type="button">
+                                                    <i class="ace-icon fa fa-share"></i>
+                                                    Send
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div><!-- /.widget-main -->
+                                </div>
+                            </div><!-- /.widget-body -->
+                        </div><!-- /.widget-box -->
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
 </div>
-<script>
-    $(document).ready(function ($) {
-        $('#attachmentWidget').perfectScrollbar({
-            wheelSpeed: 20,
-            wheelPropagation: false,
-            includePadding: true,
-            suppressScrollX : true
-        });
-    });
-    $(document).ready(function ($) {
-        $('#description').perfectScrollbar({
-            wheelSpeed: 20,
-            wheelPropagation: false,
-            includePadding: true,
-            suppressScrollX : true
-        });
-    });
-    $(document).ready(function ($) {
-        $('#commentAreaWrapper').perfectScrollbar({
-            wheelSpeed: 20,
-            wheelPropagation: false,
-            includePadding: true,
-            suppressScrollX : true
-        });
-    });
-</script>
-
-<script type="text/javascript">
-    function getDetails(id) {
-        $.ajax({
-            url: '@Url.Action("getTicketDetails","Tickets")',
-            type: 'POST',
-            data: id
-        }).done(function (result) {
-            var comments = [];
-            var attachments = [];
-            for (var i = 0; i < result.details.comments.length; i++) {
-                //convert result comment list to area form for template use
-                comments.push({
-                    commentName: result.details.comments[i].userName,
-                    commentText: result.details.comments[i].text,
-                    commentId: result.details.comments[i].id
-                });
-            }
-            for (var i = 0; i < result.details.attachments.length; i++) {
-                attachments.push({
-                    attachmentId: result.details.attachments[i].id,
-                    attachmentDescription: result.details.attachments[i].description,
-                    attachmentUrl: result.details.attachments[i].url,
-                    attachmentFilename: result.details.attachments[i].filename
-                });
-            }
-            
-            console.log(result);
-            //Set the description, and load the comments into their respective divs
-            $('#projectTitle').text(result.ticket.ProjectName);
-
-            //Populate details lists
-            $('#detailsStatus').text(result.ticket.Status);
-            $('#detailsCreatedBy').text(result.ticket.CreatedBy);
-            $('#detailsAssignedTo').text((result.ticket.AssignedTo == null) ? "" : result.ticket.AssignedTo);
-            $('#detailsSubmittedOn').text(new Date(parseInt(result.ticket.Created.substr(6))).toDateString());
-            $('#detailsUpdatedOn').text((result.details.Updated == null) ? "" :new Date(parseInt(result.details.Updated.substr(6))).toDateString());
-            $('#ticketId').val(id.id);
 
 
-            //populate description, comments, and attachments
-            $("#description").html(result.details.Description);
-            $("#commentArea").loadTemplate($("#comment"), comments);
-            $("#attachmentArea").loadTemplate($("#attachmentTemplate"), attachments);
-            //Scroll to bottom
-            $("#commentArea").scrollTop($("#commentArea").prop("scrollHeight"));
-            $("#commentArea").perfectScrollbar('update');
-        });
-    }
-
-    //Attach collapse button to file upload modal
-    $('#uploadFileButton').on('click', function (e) {
-        e.preventDefault();
-        $('#fileUploadWidget').collapse('toggle');
-        $('#attachmentArea').collapse('toggle');
-    });
 
 
-    //Upload 
-    $(document).on('change', '#attachment', function () {
-        var input = $(this),
-            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-        input.trigger('fileselect', label);
-    });
-
-    $('#attachment').on('fileselect', function (event, label) {
-        var input = $('#fileUploadText')
-        if (input.length) {
-            input.val(label);
-            $('#upload').removeClass('hidden');
-        }
-    });
-    
-    //Add expand/contract details
-    //If no details have been loaded yet, load them from database through ajax call
-    $('body').on('click', '.details', function () {
-        getDetails({ id: $(this).attr('data-ticketId') });
-    });
-
-    function scrollMe(divId, scrollTo) {
-        var destination = element.offset().bottom;
-        element.animate({ scrollTop: destination }, 500, function () { console.log(divId.scrollTop()); });
-        return false;
-    }
-    //Add ajax submit file call to upload button
-    $('body').on('click', '#upload', function (event) {
-        event.preventDefault();
-
-        var form = new FormData($('#uploadForm')[0]);
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("uploadAttachment")',
-            data: form,
-            processData: false,
-            contentType: false,
-            error: function (jqXHR, textStatus, errorMessage) {
-                console.log(errorMessage); // Optional
-            },
-            success: function (data) {  }
-        });
-        //Reset the form, hide upload button and collapse upload form
-        getDetails({ id: $('#ticketId').val() });
-        $('.ps-container').scrollTop(100).perfectScrollbar('update');
-        $('#uploadForm')[0].reset();
-        $('#upload').addClass('hidden');
-        $('#fileUploadWidget').collapse('toggle');
-        $('#attachmentArea').collapse('toggle');
- 
-    });
-    
-
-    $('body').on('click', '.deleteComment', function () {
-        var commentId = $(this).parent().siblings('.commentId').html();
-        alert(commentId);
-    });
-
-    $('body').on('click', '.submitComment', function () {
-        var ticketId = $(this).data('ticketid');
-        var commentText = $(this).parent().prev('input').val();
-
-        if (commentText != null) {
-            var commentPostModel = {
-                ticketId: ticketId,
-                text: commentText
-            };
-
-            $.ajax({
-                url: '@Url.Action("addComment","Tickets")',
-                type: 'POST',
-                data: commentPostModel
-            })
-        }
-    });
-</script>
-
+<!--Templates for jquery.templater-->
 <script type="text/html" id="blank">
 
 </script>
+
+<script type="text/html" id="selectUserOptionTemplate">
+    <option data-value="selectUserId" data-content="selectUserName"></option>
+</script>
+
 
 <script type="text/html" id="comment">
     <div class="itemdiv dialogdiv">
@@ -383,6 +276,15 @@
     </div>
 </script>
 
+<script type="text/html" id="newButton">
+    <a class="btn btn-white btn-info btn-sm" href="#" id="createTicket" data-toggle="modal" data-target="#detailsPopup">
+        <i class="fa fa-plus-circle"></i>
+        New Ticket
+    </a>
+</script>
+
+
+<!--Datatables Initialization-->
 <script type="text/javascript">
     $(document).ready((function setDataTable() {
         if(!window.jQuery || !$.fn.DataTable) {
@@ -396,29 +298,401 @@
             "bStateSave": true,
             "bServerSide": true,
             "bFilter": true,
-            "dom": '<"#tableControls"lf>rtip',
-            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-            "sAjaxSource": "/Tickets/getTickets", 
-            "fnServerData": function(sSource, aoData, fnCallback) {
+            "dom": '<"#ticketsTableControls"lf>rtip',
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "sAjaxSource": "/Tickets/getTickets",
+            "fnServerData": function (sSource, aoData, fnCallback) {
                 $.ajax({
                     "dataType": 'json',
                     "type": "POST",
                     "url": sSource,
                     "data": aoData,
                     "success": fnCallback
+                }).done(function () {
+                    $('th[aria-label=Actions]').attr('style', 'width: 1%;');
                 });
             },
-            "aoColumnDefs" : [{"bSortable":false,"aTargets":[0,1,3,7]},{"bVisible":false,"aTargets":[8,9,10,11]},{"bSearchable":false,"aTargets":[1,7]}],
-            "aoSearchCols": [null,null,null,null,null,null,null,null,null,null,null,null]
-                , "aLengthMenu":[[10,25,250,-1],[10,25,250,"All"]]
+            "aoColumnDefs": [{ "bSortable": false, "aTargets": [0, 1, 3, 7] }, { "bVisible": false, "aTargets": [8, 9, 10, 11] }, { "bSearchable": false, "aTargets": [1, 7] }],
+            "aoSearchCols": [null, null, null, null, null, null, null, null, null, null, null, null]
+                , "aLengthMenu": [[10, 25, 250, -1], [10, 25, 250, "All"]]
         });
-        $('#tableControls').addClass('table-header');
+        $('#ticketsTableControls').addClass('table-header');
         $('#Tickets_length').prepend($('#newButton').html());
     }));
     </script>
-<script type="text/html" id="newButton">
-    <a class="btn btn-white btn-info btn-sm" href="@Url.Action("Create", "Tickets")">
-        <i class="fa fa-plus-circle"></i>
-        New Ticket
-    </a>
+
+
+<!--popup window scripts-->
+<script type="text/javascript">
+    function getDetails(id) {
+        $.ajax({
+            url: '@Url.Action("getTicketDetails","Tickets")',
+            type: 'POST',
+            data: id
+        }).done(function (result) {
+
+            var comments = [];
+            var attachments = [];
+            var users = [];
+            for (var i = 0; i < result.details.comments.length; i++) {
+                //convert result comment list to area form for template use
+                comments.push({
+                    commentName: result.details.comments[i].userName,
+                    commentText: result.details.comments[i].text,
+                    commentId: result.details.comments[i].id
+                });
+            }
+            for (var i = 0; i < result.details.attachments.length; i++) {
+                attachments.push({
+                    attachmentId: result.details.attachments[i].id,
+                    attachmentDescription: result.details.attachments[i].description,
+                    attachmentUrl: result.details.attachments[i].url,
+                    attachmentFilename: result.details.attachments[i].filename
+                });
+            }
+
+            users.push({ selectUserId: null, selectUserName: null });
+
+            for (var i = 0; i < result.users.length; i++) {
+                users.push({
+                    selectUserId: result.users[i].id,
+                    selectUserName: result.users[i].username
+                });
+            }
+
+            //Set the description, and load the comments into their respective divs
+            $('#projectTitle').text(result.ticket.Title);
+
+            //Populate details lists
+            $('#title').text(result.ticket.Title);
+            $('#detailsProject').text(result.ticket.ProjectName);
+            $('#detailsStatus').text(result.ticket.Status);
+            $('#detailsCreatedBy').text(result.ticket.CreatedBy);
+            $('#detailsAssignedTo').text((result.ticket.AssignedTo == null) ? "" : result.ticket.AssignedTo);
+            $('#detailsSubmittedOn').text(new Date(parseInt(result.ticket.Created.substr(6))).toDateString());
+            $('#detailsUpdatedOn').text((result.details.Updated == null) ? "" : new Date(parseInt(result.details.Updated.substr(6))).toDateString());
+            $('.submitComment').data('ticketid', id.id);
+            $('#ticketId').val(id.id);
+
+
+            //populate description, comments, and attachments
+            $("#description").html(result.details.Description);
+            $("#commentArea").loadTemplate($("#comment"), comments);
+            $("#attachmentArea").loadTemplate($("#attachmentTemplate"), attachments);
+            $('#detailsAssignedToEditor').loadTemplate($('#selectUserOptionTemplate'), users);
+
+            //Set default values of form
+            $('#detailsStatusEditor option:contains("' + $('#detailsStatus').text() + '")').attr('selected', 'selected');
+            $('#detailsAssignedToEditor option:contains("' + $('#detailsAssignedTo').text() + '")').attr('selected', 'selected');
+            $('#descriptionTextEditor').val($('#description').text());
+            $('#titleEditor').val($('#title').text());
+
+            //Create / recreate scrollbars, and scroll to bottom
+
+            $('#attachmentWidget').ace_scroll({ size: 150 }).ace_scroll('end');
+            $('#description').ace_scroll();
+            $('#commentAreaWrapper').ace_scroll().ace_scroll('end');
+
+            //If we ever hid the comment widget, make sure it's shown
+            $('#commentsWidget').show();
+            $('#detailsEdit').show();
+        });
+    }
+
+    //Attach collapse button to file upload modal
+    $('#uploadFileButton').on('click', function (e) {
+        e.preventDefault();
+        $('#fileUploadWidget').collapse('toggle');
+        $('#attachmentArea').collapse('toggle');
+    });
+
+
+    //When a file is selected in the file input, remove the path from the filename and display it
+    $(document).on('change', '#attachment', function () {
+        var input = $(this),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+        input.trigger('fileselect', label);
+    });
+    $('#attachment').on('fileselect', function (event, label) {
+        var input = $('#fileUploadText')
+        if (input.length) {
+            input.val(label);
+            $('#upload').removeClass('hidden');
+        }
+    });
+
+    //Add expand/contract details
+    //load them from database through ajax call
+    $('body').on('click', '.details', function () {
+        //Make sure editors are hidden
+        resetFormView();
+
+        getDetails({ id: $(this).data('ticketid') });
+    });
+
+    //Add ajax submit file call to upload button
+    $('body').on('click', '#upload', function (event) {
+        event.preventDefault();
+        //If this is not a new ticket, upload the attachment
+        if ($('ticketId').val() != null) {
+            var form = new FormData();
+            form.append('ticketId', $('#ticketId').val());
+            form.append('uploadDescription', $('#uploadDescription').val());
+            form.append('attachment', $('#attachment')[0].files[0]);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("uploadAttachment")',
+                data: form,
+                processData: false,
+                contentType: false,
+                error: function (jqXHR, textStatus, errorMessage) {
+                    console.log(errorMessage); // Optional
+                },
+                success: function (data) { }
+            }).done(function () {
+                //Reset the form, hide upload button and collapse upload form
+                getDetails({ id: $('#ticketId').val() });
+                $('#uploadForm')[0].reset();
+                $('#upload').addClass('hidden');
+                $('#fileUploadWidget').collapse('toggle');
+                $('#attachmentArea').collapse('toggle');
+            });
+        }
+        //else submit create ticket?
+    });
+
+
+    $('body').on('click', '.deleteComment', function () {
+        //NYI
+    });
+
+    $('body').on('click', '.submitComment', function () {
+        var ticketId = $(this).data('ticketid');
+        var commentText = $(this).parent().prev('input').val();
+
+        if (commentText != null) {
+            var commentPostModel = {
+                ticketId: ticketId,
+                text: commentText
+            };
+
+            $.ajax({
+                url: '@Url.Action("addComment","Tickets")',
+                type: 'POST',
+                data: commentPostModel
+            })
+        }
+    });
+</script>
+
+
+<script>
+    $('#detailsPopup').on('hidden.bs.modal', function() {
+        resetFormView();
+    });
+
+    function resetFormView()
+    {
+        $('#commentsWidget').show();
+
+        //Need to add a class to these for quick access to make 1 show call instead of many
+        $('#title').show();
+        $('#detailsProject').show();
+        $('#detailsStatus').show();
+        $('#detailsAssignedTo').show();
+        $('#description').show();
+
+        //Hide all form elements
+        $('.detailsEditor').hide();
+
+        //Hide edit bars
+        $('#submitEditToolbar').hide();
+        $('#submitCreateToolbar').hide();
+
+        //show edit button
+        $('#detailsEdit').show();
+
+    }
+    function showFormView() {
+        
+        $('#title').hide();
+        $('#titleEditor').show();
+        //$('#detailsProject').hide();
+        //$('#detailsProjectEditor').show();
+        $('#detailsStatus').hide();
+        $('#detailsStatusEditor').show();
+        $('#detailsAssignedTo').hide();
+        $('#detailsAssignedToEditor').show();
+        $('#description').hide();
+        $('#descriptionTextEditor').show();
+    }
+    function toggleFormView() {
+        $('#title').toggle();
+        $('#titleEditor').toggle();
+        //$('#detailsProject').show();
+        //$('#detailsProjectEditor').hide();
+        $('#detailsStatus').toggle();
+        $('#detailsStatusEditor').toggle();
+        $('#detailsAssignedTo').toggle();
+        $('#detailsAssignedToEditor').toggle();
+        $('#description').toggle();
+        $('#descriptionTextEditor').toggle();
+    }
+    $(function ($) {
+        
+        //On load, set default form visibility for modal
+        resetFormView();
+
+        //Get project user options for assign to for project list
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("getUsersForProjects")',
+        }).done(function (data) {
+            var options = { '-1': '<option></option>' };
+            for (var projectKey in data) {
+                var optionList = "<option></option>";
+                for (var userKey in data[projectKey]) {
+                    optionList += '<option value="' + userKey + '">' + data[projectKey][userKey] + '</option>';
+                }
+                options[projectKey] = optionList;
+            }
+            window.projectUserOptions = options;
+
+            $("#detailsProjectEditor").change(function () {
+                var val = $(this).val();
+                $("#detailsAssignedToEditor").html(window.projectUserOptions[val]);
+            });
+        });
+
+        $('body').on('click', '#createTicket', function () {
+            //Clear information in the modal
+            //Set the description, and load the comments into their respective divs
+            $('#projectTitle').text('');
+            $('#detailsAssignedToEditor').html('<option></option>');
+
+            //Populate details lists
+            $('#title').text('');
+            $('#detailsProject').text('');
+            $('#detailsStatus').text('');
+            $('#detailsCreatedBy').text('');
+            $('#detailsAssignedTo').text('');
+            $('#detailsSubmittedOn').text('');
+            $('#detailsUpdatedOn').text('');
+            $('.submitComment').data('');
+            $('#ticketId').val('');
+
+
+            //populate description, comments, and attachments
+            $("#description").html('');
+            $("#commentArea").text('');
+            $("#attachmentArea").text('');
+
+            //Clear editor values
+            $('#detailsAssignedToEditor').val(-1);
+            $('#detailsStatusEditor').val(1);
+            $('#detailsProjectEditor').val(-1);
+            $('#descriptionTextEditor').val('Details go here..');
+            $('#titleEditor').val('Title goes here..');
+
+
+            //resetFormView();
+            toggleFormView();
+
+            //This is the only time this box is ever shown, make sure to show it
+            $('#detailsProjectEditor').show();
+            $('#detailsProject').hide();
+            //Hide the comments box, we don't need it for new tickets. 
+            //First "comment" should be the description and edit button
+            $('#commentsWidget').hide();
+            $('#detailsEdit').hide();
+
+            //show the save button
+            $('#submitCreateToolbar').show();
+
+            //Toggle the file uploader on
+            $('#fileUploadWidget').collapse('toggle');
+            $('#attachmentArea').collapse('toggle');
+        });
+
+        //Edit ticket modal control
+        $('body').on('click', '#detailsEdit', function () {
+            //Show the save button
+            $('#submitEditToolbar').show();
+
+            //Hide the edit button
+            $('#detailsEdit').hide();
+
+            showFormView();
+        });
+
+
+        $('body').on('click', '#submitEdit', function () {
+            //If an edit has been made, submit the form    
+            if ($('#detailsStatus').text() != $('#detailsStatusEditor').find(':selected').text() ||
+                $('#detailsAssignedTo').text() != $('#detailsAssignedToEditor').find(':selected').text() ||
+                $('#description').text() != $('#descriptionTextEditor').val()) {
+                if (confirm("Are you sure you want to submit these changes?")) {
+                    //post the form data using webkit FormData
+                    var form = new FormData($('#detailsForm')[0]);
+                    window.myform = form;
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("editTicket", "Tickets")',
+                        data: form,
+                        processData: false,
+                        contentType: false
+                        }).done(function (result) {
+                        //Update visible form to match edits, and then turn off edit mode
+                        getDetails({ id: $('#ticketId').val() });
+                        resetFormView();
+                    });
+                }
+                //If user says no, do nothing - stay in edit mode
+            }
+            else {
+                //reset form values to defaults and hide form if no changes were made
+                $('#detailsForm')[0].reset();
+                resetFormView();
+            }
+        });
+        $('body').on('click', '#cancelEdit', function () {
+            resetFormView();
+            
+        });
+        $('body').on('click', '#submitCreate', function () {
+            if ($('#detailsProjectEditor').val() &&
+                $('#descriptionTextEditor').val() != 'Details go here..' &&
+                $('#titleEditor').val() != 'Title goes here..') {
+                if (confirm("Are you sure you want to submit this Ticket?")) {
+                    //post the form data using webkit FormData
+                    var form = new FormData($('#detailsForm')[0]);
+                    window.myform = form;
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("createTicket", "Tickets")',
+                        data: form,
+                        processData: false,
+                        contentType: false,
+                    }).done(function (result) {
+                        //Update visible form to match edits, and then turn off edit mode
+                        getDetails({ id: result.id });
+                        resetFormView();
+
+                        $('#fileUploadWidget').collapse('hide');
+                        $('#attachmentArea').collapse('show');
+                    });
+                }
+            }
+            //Else validate: must select a project
+        });
+
+        $('body').on('click', '#cancelCreate', function () {
+            resetFormView();
+            $('#fileUploadWidget').collapse('hide');
+            $('#attachmentArea').collapse('show');
+            $('#detailsPopup').modal('hide');
+        });
+
+            
+    });
 </script>

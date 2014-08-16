@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using BuggerOff.DataAccess;
-using PagedList;
-using PagedList.Mvc;
+using Mvc.JQuery.Datatables;
 
 namespace BuggerOff.ViewModels
 {
     public class UserViewModelItem
     {
-        public int numTickets { get; set; }
-        public string userId { get; set; }
+        [DataTables(DisplayName = "Username", Searchable = true, Sortable = true)]
         public string userName { get; set; }
+        [DataTables(DisplayName = "E-mail", Searchable = true, Sortable = true)]
         public string email { get; set; }
+        [DataTables(DisplayName = "Tickets", Searchable = true, Sortable = true)]
+        public int numTickets { get; set; }
+        [DataTables(DisplayName = "Role", Searchable = true, Sortable = true)]
+        public string highestRole { get; set; }
+
+        [DataTables(Visible = false)]
         public string phoneNumber { get; set; }
+        [DataTables(Visible = false)]
+        public string userId { get; set; }
+        [DataTables(Visible = false)]
         public List<String> roles { get; set; }
     }
 
@@ -41,11 +49,5 @@ namespace BuggerOff.ViewModels
                 userItems.Add(new UserViewModelItem() { userId = user.Id, userName = user.UserName, email = user.Email, phoneNumber = user.PhoneNumber, numTickets = user.Tickets.Count, roles = roleNames });
             }
         }
-
-        public IPagedList ToPagedList(int page, int numPerPage)
-        {
-            return userItems.ToPagedList(page, numPerPage);
-        }
-
     }
 }

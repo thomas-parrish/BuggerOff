@@ -75,6 +75,12 @@ namespace BuggerOff.ViewModels
         public string AssignedToUserId { get; set; }
     }
 
+    public class TicketViewModel : TicketViewModelShort
+    {
+        public string description { get; set; }
+        public int statusId { get; set; }
+        public string AssignedToUser { get; set; }
+    }
 
     public class CommentViewModel {
         public int? id {get; set;}

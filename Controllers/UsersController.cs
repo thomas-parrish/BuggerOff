@@ -4,10 +4,12 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using Microsoft.AspNet.Identity;
 using System.Web;
 using System.Web.Mvc;
 using BuggerOff.DataAccess;
 using BuggerOff.ViewModels;
+using Mvc.JQuery.Datatables;
 
 namespace BuggerOff.Controllers
 {
@@ -17,12 +19,11 @@ namespace BuggerOff.Controllers
 
         // GET: Users
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Index(int? page)
+        public ActionResult Index()
         {
-            var pageNumber = page ?? 1;
             if (Request.IsAjaxRequest())
-                return PartialView(new UserViewModel().ToPagedList(pageNumber, 10));
-            return View(new UserViewModel().ToPagedList(pageNumber, 10));
+                return PartialView();
+            return View();
         }
 
         // GET: Users/Details/5
@@ -40,6 +41,41 @@ namespace BuggerOff.Controllers
             }
             return View(aspNetUser);
         }
+
+
+        [Authorize(Roles = "Administrator, Project Manager")]
+        public DataTablesResult<UserViewModelItem> getUsers(DataTablesParam dataTableParam)
+        {
+            var users = db.AspNetUsers.AsQueryable();
+
+            var currentUserId = User.Identity.GetUserId();
+
+
+            var result = DataTablesResult.Create(users.Select(user => new UserViewModelItem() {
+                numTickets = user.Tickets.Count,
+                userId = user.Id,
+                userName = user.UserName,
+                email = user.Email,
+                phoneNumber = user.PhoneNumber,
+                highestRole = user.AspNetRoles.FirstOrDefault().Name
+                }),
+                dataTableParam,
+                formatter => new
+                {
+                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-userId=\"" + formatter.userId + "\"" +
+                                    "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
+                                    "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
+                                "</a>" //+
+                                //((User.IsInRole("Administrator")) ?
+                                /*"<a href=" + @Url.Action("Delete", new { id = formatter.projectId }) + " class=\"btn btn-sm btn-danger\">" +
+                                    "<i class=\"icon-flash-off\"></i> Delete" +
+                                "</a>" : "")*/
+                }
+            );
+            return result;
+        }
+
+
 
         // GET: Users/Create
         [Authorize(Roles = "Administrator")]

@@ -49,10 +49,7 @@ namespace BuggerOff.Controllers
                 dataTableParam,
                 formatter => new
                 {
-                    buttons = "<a href=" + @Url.Action("Edit", new { id = formatter.projectId }) + " class=\"btn btn-sm btn-success\">" +
-                                    "<i class=&quot;glyphicon glyphicon-edit&quot;></i> Edit" +
-                                "</a>" +
-                                "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-ticketId=\"" + formatter.projectId + "\"" +
+                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-ticketId=\"" + formatter.projectId + "\"" +
                                     "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
                                     "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
                                 "</a>" +

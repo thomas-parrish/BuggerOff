@@ -1,75 +1,55 @@
 ﻿@using BuggerOff.DataAccess;
 @using BuggerOff.ViewModels;
-@using PagedList;
-@using PagedList.Mvc;
+@using Mvc.JQuery.Datatables;
+@using BuggerOff.Controllers;
 
+<div class="dataTables_wrapper table-responsive no-footer">
+    <table id="Users" class="display table table-bordered table-striped dataTable no-footer" role="grid" aria-describedby="Users_info">
+        <thead>
+            <tr role="row">
+                <th class="sorting" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Username: activate to sort column ascending">Username</th>
+                <th class="sorting" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="E-mail: activate to sort column ascending">E-mail</th>
+                <th class="sorting_desc" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Tickets: activate to sort column ascending" aria-sort="descending">Tickets</th>
+                <th class="sorting" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Role: activate to sort column ascending">Role</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
-@model IPagedList<UserViewModelItem>
+<script type="text/javascript">
 
-@{
-    ViewBag.Title = "Index";
-}
-
-<style>
-    .redfill { fill: red;}
-</style>
-
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            Username
-        </th>
-        <th>
-            Email
-        </th>
-        <th>
-            Role
-        </th>
-        <th>
-            Tickets
-        </th>
-        <th class="col-md-3">
-
-        </th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @item.userName
-        </td>
-        <td>
-            @item.email
-        </td>
-        <td>
-            @item.roles.FirstOrDefault()
-        </td>
-        <td>
-            <a href="@Url.Action("../Tickets/Index", new { Search = item.userName, ascending = ViewBag.ascending, searchBy = "AssignedTo" })">@item.numTickets</a>
-        </td>
-        <td class="col-md-3">
-            <div class="input-group-btn">
-                @if (User.IsInRole("Administrator")) { 
-                <a href="@Url.Action("Edit", "Users", new { id = item.userId })" class="btn btn-success">
-                    <i class="glyphicon glyphicon-edit"></i> Edit
-                </a>
-                }
-                <a href="@Url.Action( "Details", new { id = item.userId })" class="btn btn-success">
-                    <i class="glyphicon glyphicon-plus-sign"></i> Details
-                </a>
-                @if(User.IsInRole("Administrator")) { 
-                <a href="@Url.Action("Delete", new { id = item.userId })" class="btn btn-danger">
-                    <i class="icon-flash-off"></i> Delete
-                </a>
-                }
-            </div>
-        </td>
-    </tr>
-}
-
-</table>
+    (function setDataTable() {
+        if(!window.jQuery || !$.fn.DataTable) {
+            setTimeout(setDataTable, 100);
+            return;
+        }
+        var $table = $('#Users');
+        var dt = $table.dataTable({
+            "aaSorting": [],
+            "bProcessing": true,
+            "bStateSave": false,
+            "bServerSide": true,
+            "bFilter": true,
+            "dom": '<"#UsersTableControls"lf>rtip',
+            "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "bAutoWidth": false,
+            "sAjaxSource": "/Users/getUsers",
+            "oTableTools": { "sSwfPath": "//cdn.datatables.net/tabletools/2.2.1/swf/copy_csv_xls_pdf.swf" },
+            "fnServerData": function(sSource, aoData, fnCallback) {
+                $.ajax({
+                    "dataType": 'json',
+                    "type": "POST",
+                    "url": sSource,
+                    "data": aoData,
+                    "success": fnCallback
+                });
+            },
+            "aoColumnDefs" : [{"bVisible":false,"aTargets":[4,5,6]}],
+            "aoSearchCols": [null,null,null,null,null,null,null]
+                
+        });
+        $('#UsersTableControls').addClass('table-header');
+    })();
+</script>

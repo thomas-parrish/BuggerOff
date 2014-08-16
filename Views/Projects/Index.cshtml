@@ -17,7 +17,7 @@
             <tr role="row">
                 <th class="sorting" tabindex="0" aria-controls="Projects" rowspan="1" colspan="1" aria-label="Assigned To: activate to sort column ascending">Project Name</th>
                 <th class="sorting_disabled">Number of Tickets</th>
-                <th class="sorting_disabled" id="actions">Actions</th>
+                <th class="sorting_disabled" id="actions" aria-label="Actions">Actions</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -37,7 +37,7 @@
             "bStateSave": true,
             "bServerSide": true,
             "bFilter": true,
-            "dom": '<"#tableControls"lf>rtip',
+            "dom": '<"#projectsTableControls"lf>rtip',
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "bAutoWidth": false,
             "sAjaxSource": "/Projects/getProjects",
@@ -48,12 +48,13 @@
                     "url": sSource,
                     "data": aoData,
                     "success": fnCallback
+                }).done(function () {
+                    $('th[aria-label^=Actions]').attr('style', 'width: 182px;');
                 });
             }
         });
-        $('#tableControls').addClass('table-header');
+        $('#projectsTableControls').addClass('table-header');
         $('#Projects_length').prepend($('#newButton').html());
-        //$('#actions').width(0,)
     })();
 </script>
 

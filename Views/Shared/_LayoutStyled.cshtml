@@ -133,54 +133,29 @@
                         <i class="menu-icon fa fa-home"></i>
                         <span class="menu-text"> Home </span>
                     </a>
-
-                    <b class="arrow"></b>
                 </li>
                 <li class="hover outer @{if(route.Contains("Tickets")){ <text>open active</text>;}}">
-                    <a href="#" class="dropdown-toggle">
+                    <a href="@Url.Action("Index", "Tickets")">
                         <i class="menu-icon fa fa-bug"></i>
                         <span class="menu-text"> Tickets </span>
-
-                        <b class="arrow fa fa-angle-down"></b>
                     </a>
-
-                    <b class="arrow"></b>
-                    <ul class="submenu">
-                        <li class="hover"><a href="@Url.Action("Index", "Tickets")"> <i class="menu-icon fa fa-caret-right"></i> View Tickets</a></li>
-                        <li class="hover"><a href="@Url.Action("Create", "Tickets")"> <i class="menu-icon fa fa-caret-right"></i> Create Ticket</a></li>
-                    </ul>
                 </li>
                 @if (User.IsInRole("Administrator"))
                 {
                     <li class="hover outer @{if(route.Contains("User")){ <text>open active</text>;}}">
-                        <a href="#" class="dropdown-toggle">
+                        <a href="@Url.Action("Index", "Users")">
                             <i class="menu-icon fa fa-group"></i>
                             <span class="menu-text"> User Manager </span>
-
-                            <b class="arrow fa fa-angle-down"></b>
                         </a>
-
-                        <b class="arrow"></b>
-                        <ul class="submenu">
-                            <li class="hover"><a href="@Url.Action("Index", "Users")"> <i class="menu-icon fa fa-caret-right"></i> View Users</a></li>
-                        </ul>
                     </li>
                 }
                 @if (User.IsInRole("Administrator") || User.IsInRole("Project Manager"))
                 {
                     <li class="hover outer @{if(route.Contains("Projects")){ <text>open active</text>;}}">
-                        <a href="#" class="dropdown-toggle">
+                        <a href="@Url.Action("Index", "Projects")">
                             <i class="menu-icon fa fa-pencil-square-o"></i>
                             <span class="menu-text"> Projects </span>
-
-                            <b class="arrow fa fa-angle-down"></b>
                         </a>
-
-                        <b class="arrow"></b>
-                        <ul class="submenu">
-                            <li class="hover"><a href="@Url.Action("Index", "Projects")"> <i class="menu-icon fa fa-caret-right"></i> View Projects</a></li>
-                            <li class="hover"><a href="@Url.Action("Create", "Projects")"> <i class="menu-icon fa fa-caret-right"></i> Create Projects</a></li>
-                        </ul>
                     </li>
                 }
             </ul><!-- /.nav-list -->
@@ -254,7 +229,7 @@
     <script src="~/assets/js/jquery.dataTables.min.js"></script>
     <script src="~/assets/js/jquery.dataTables.bootstrap.js"></script>
     <!-- ace scripts -->
-    <script src="~/assets/js/ace-elements.min.js"></script>
+    <script src="~/assets/js/uncompressed/ace-elements.js"></script>
     <script src="~/assets/js/ace.min.js"></script>
     <script type="text/javascript">
     jQuery(function ($) {
