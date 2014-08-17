@@ -3,6 +3,8 @@
 @using Mvc.JQuery.Datatables;
 @using BuggerOff.Controllers;
 
+<script src="~/Scripts/jquery.loadTemplate-1.4.4.min.js"></script>
+
 <div class="dataTables_wrapper table-responsive no-footer">
     <table id="Users" class="display table table-bordered table-striped dataTable no-footer" role="grid" aria-describedby="Users_info">
         <thead>
@@ -11,12 +13,103 @@
                 <th class="sorting" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="E-mail: activate to sort column ascending">E-mail</th>
                 <th class="sorting_desc" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Tickets: activate to sort column ascending" aria-sort="descending">Tickets</th>
                 <th class="sorting" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Role: activate to sort column ascending">Role</th>
+                <th class="sorting_disabled" tabindex="0" aria-controls="Users" rowspan="1" colspan="1" aria-label="Actions">Actions</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 </div>
+
+
+
+<div class="modal fade" id="userDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="padding:10px 10px 10px 10px;">
+            <form id="detailsForm" action="@Url.Action("updateDetails","Users")">
+                <input type="hidden" name="id" id="userId" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="widget-box widget-color-green">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon fa fa-user smaller-90"></i>
+                                    User Details
+                                </h4>
+                                <div style="float:right; padding-right:5px;">
+                                    <a href="#" id="editUserButton"><h4><i class="ace-icon fa fa-pencil white"></i></h4></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-blue" style="height:180px; overflow-y:hidden">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon glyphicon glyphicon-list-alt smaller-90"></i>
+                                    Details
+                                </h4>
+                            </div>
+                            <div class="widget-body" style="padding:10px;">
+                                <ul class="list-group list-unstyled" style="margin-bottom:0px;">
+                                    <li>
+                                        <i class="ace-icon fa fa-info" style="padding-right: 5px;"></i><label>Name</label>
+                                        <span style="float:right;" id="detailsName">Not Yet Implemented</span>
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-user" style="padding-right: 5px;"></i><label>Username</label>
+                                        <span style="float:right;" id="detailsUsername"></span>
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-envelope-o" style="padding-right: 5px;"></i><label>E-mail</label>
+                                        <span style="float:right;"><a href="#" id="detailsEmail"></a></span>
+                                    </li>
+                                    <li>
+                                        <i class="ace-icon fa fa-gavel" style="padding-right: 5px;"></i><label>Role</label>
+                                        <span style="float:right;" id="detailsRole"></span>
+                                        <select id="roleEditor" name="role" style="float:right; min-width:120px;"></select>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-red" style="height:180px;" >
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon fa fa-pencil-square-o smaller-90"></i>
+                                    Projects
+                                </h4>
+                            </div>
+                            <div class="widget-body" id="projectsWidget" style="padding:10px; position:relative; height: 129px; overflow:hidden;">
+                                <ul class="item-list" id="projectsList"></ul>
+                                <div id="projectsEditor"><ul class="item-list" id="projects"></ul></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row" id="submitEditToolbar">
+                <div class="col-sm-12">
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
+                            Cancel
+                        </a>
+                        <a href="#" class="check btn btn-sm btn-primary" id="submitEdit">
+                            Submit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <script type="text/javascript">
 
@@ -44,12 +137,165 @@
                     "url": sSource,
                     "data": aoData,
                     "success": fnCallback
+                }).done(function () {
+                    $('th[aria-label^=Actions]').attr('style', 'width: 1%;');
                 });
             },
-            "aoColumnDefs" : [{"bVisible":false,"aTargets":[4,5,6]}],
-            "aoSearchCols": [null,null,null,null,null,null,null]
+            "aoColumnDefs" : [{"bVisible":false,"aTargets":[5,6,7]}],
+            "aoSearchCols": [null,null,null,null,null,null,null,null]
                 
         });
         $('#UsersTableControls').addClass('table-header');
     })();
+
+    $(document).ready(function () {
+
+        $('#submitEditToolbar').hide();
+        $('#submitCreateToolbar').hide();
+
+        @if(User.IsInRole("Administrator")){
+            <text>
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("getRoles")',
+                }).done(function (roleDict) {
+                    var roles = [];
+
+                    for (var roleKey in roleDict) {
+                        roles.push({ roleName: roleDict[roleKey], roleId: roleKey });
+                    }
+                    $('#roleEditor').loadTemplate($('#rolesEditorTemplate'), roles);
+                });
+            </text>
+        }
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("getProjects")',
+        }).done(function (projectDict) {
+            var projects = [];
+
+            for (var projectKey in projectDict) {
+                projects.push({ projectName: projectDict[projectKey], projectId: projectKey });
+            }
+            $('#projects').loadTemplate($('#projectsEditorTemplate'), projects);
+        });
+
+
+    });
+
+    function resetFormView() {
+        //Hide editors, show values
+        $('#detailsRole').show();
+        $('#projectsList').show();
+        $('#editUserButton').show();
+
+        $('#roleEditor').hide();
+        $('#projectsEditor').hide();
+        $('#submitEditToolbar').hide();
+    }
+
+
+    $('#userDetailsPopup').on('hidden.bs.modal', function () {
+        resetFormView();
+    });
+
+    $('body').on('click', '#editUserButton', function () {
+        //Make sure editors are hidden
+        $('#detailsRole').hide();
+        $('#projectsList').hide();
+        $('#editUserButton').hide();
+
+        $('#roleEditor').show();
+        $('#projectsEditor').show();
+        $('#submitEditToolbar').show();
+    });
+
+    $('body').on('click', '#cancelEdit', function () {
+        resetFormView();
+    });
+
+    $('body').on('click', '#submitEdit', function () {
+        if (confirm("Are you sure you want to edit this User?")) {
+            //post the form data using webkit FormData
+            var form = new FormData($('#detailsForm')[0]);
+            window.myform = form;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("editUser", "Users")',
+                data: form,
+                processData: false,
+                contentType: false,
+            }).done(function (result) {
+
+                //Update visible form to match edits, and then turn off edit mode
+
+                //Reload table results
+                $('#Users').DataTable().draw();
+                getDetails($('#userId').val());
+                resetFormView();
+            });
+        }
+        else {
+            $('#detailsForm')[0].reset();
+            resetFormView();
+        }
+    });
+
+    function getDetails(id) {
+        $.get('/Users/GetEditViewModel', { id: id }).done(function (data) {
+            ViewModelData = data;
+
+            $('#detailsUsername').text( data.Username );
+            $('#detailsEmail').text( data.Email );
+            $('#detailsEmail').prop('href', "mailto:" + data.Email);
+            // display data
+
+            var activeProjects = [];
+            //clear check boxes
+            $('#projectsEditor input[type="checkbox"]').prop('checked', null);
+
+            for (var i = 0; i < ViewModelData.Projects.length; i++) {
+
+                if (ViewModelData.Projects[i].IsSelected) {
+                    $('#projectsEditor input[type="checkbox"][value="' + ViewModelData.Projects[i].ProjectId + '"]').prop('checked', 'checked');
+                    activeProjects.push({ projectName: ViewModelData.Projects[i].ProjectName });
+                }
+            }
+            $('#projectsList').loadTemplate($('#projectsTemplate'), activeProjects);
+
+            $('#detailsRole').text(ViewModelData.roleName);
+            window.ViewModelData = ViewModelData;
+            $('#roleEditor option[value=' + ViewModelData.roleId + ']').attr('selected', 'selected');
+
+            $('#projectsWidget').ace_scroll({ size: 129 });
+
+            //Hide editors
+            resetFormView();
+        });
+    }
+
+    $('body').on('click', '.userDetails', function () {
+            
+        $('#userId').val($(this).data('userid'));
+
+        getDetails($(this).data('userid'));
+
+    });
+</script>
+
+<!--Templates-->
+<script type="text/html" id="rolesEditorTemplate">
+    <option data-content="roleName" data-value="roleId"></option>
+</script>
+
+<script type="text/html" id="projectsTemplate">
+    <li class="item-red tight">
+        <span data-content="projectName"></span>
+    </li>
+</script>
+
+<script type="text/html" id="projectsEditorTemplate">
+    <li class="item-red tight">
+        <input class="ace-checkbox-2" name="Projects" type="checkbox" data-value="projectId" /> <span data-content="projectName"></span>
+    </li>
 </script>

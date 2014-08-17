@@ -42,6 +42,33 @@ namespace BuggerOff.Controllers
             return View(aspNetUser);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Administrator, Project Manager")]
+        public ActionResult editUser(string id, string role, IEnumerable<int> Projects)
+        {
+            try
+            {
+                var user = db.AspNetUsers.Find(id);
+                Dictionary<int, Project> projectList = db.Projects.ToDictionary(key => key.Id);
+                Dictionary<string, AspNetRole> roleList = db.AspNetRoles.ToDictionary(key => key.Id);
+
+                user.AspNetRoles.Clear();
+                user.AspNetRoles.Add(roleList[role]);
+
+                //This needs to be obtimized, so that we only perform necessary operations!
+                //I.e. don't clear if we aren't making any changes!
+                user.Projects.Clear();
+
+                foreach (var projectId in Projects)
+                    user.Projects.Add(projectList[projectId]);
+
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            catch (Exception e) { }
+            return Json("");
+        }
+
 
         [Authorize(Roles = "Administrator, Project Manager")]
         public DataTablesResult<UserViewModelItem> getUsers(DataTablesParam dataTableParam)
@@ -62,14 +89,10 @@ namespace BuggerOff.Controllers
                 dataTableParam,
                 formatter => new
                 {
-                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-userId=\"" + formatter.userId + "\"" +
-                                    "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
+                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success userDetails\" data-userId=\"" + formatter.userId + "\"" +
+                                    "data-toggle=\"modal\" data-target=\"#userDetailsPopup\">" +
                                     "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
-                                "</a>" //+
-                                //((User.IsInRole("Administrator")) ?
-                                /*"<a href=" + @Url.Action("Delete", new { id = formatter.projectId }) + " class=\"btn btn-sm btn-danger\">" +
-                                    "<i class=\"icon-flash-off\"></i> Delete" +
-                                "</a>" : "")*/
+                                "</a>"
                 }
             );
             return result;
@@ -166,6 +189,30 @@ namespace BuggerOff.Controllers
             base.Dispose(disposing);
         }
 
+        [Authorize(Roles = "Administrator")]
+        public ActionResult getRoles()
+        {
+            var rolesDict = new Dictionary<string, string>();
+
+            foreach (var role in db.AspNetRoles.ToList())
+            {
+                rolesDict.Add(role.Id, role.Name);
+            }
+
+            return Json(rolesDict, JsonRequestBehavior.AllowGet);
+        }
+        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
+        public ActionResult getProjects()
+        {
+            var projectsDict = new Dictionary<string, string>();
+
+            foreach (var project in db.Projects.ToList())
+            {
+                projectsDict.Add(project.Id.ToString(), project.Name);
+            }
+
+            return Json(projectsDict, JsonRequestBehavior.AllowGet);
+        }
 
         [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
         public ActionResult GetEditViewModel(string id)
@@ -173,9 +220,7 @@ namespace BuggerOff.Controllers
             if (id == "")
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            AdminEditUSerViewModel ViewModel = new AdminEditUSerViewModel(id.ToString())
-            {
-            };
+            AdminEditUSerViewModel ViewModel = new AdminEditUSerViewModel(id.ToString());
 
             return Json(ViewModel, JsonRequestBehavior.AllowGet);
         }
@@ -233,34 +278,6 @@ namespace BuggerOff.Controllers
             //roleList.First().Value.AspNetUsers (add user to roles)
             //Add roles to user
 
-            foreach (var role in ViewModel.Roles)
-            {
-                var currentDbRole = roleList[role.RoleId];
-                if (currentDbRole != null)
-                {
-                    //If the state of the role in the view model has changed
-                    if (role.IsSelected != role.PreviouslySelected)
-                    {
-                        role.PreviouslySelected = role.IsSelected;
-                        if (role.IsSelected)
-                        {
-                            //Link the project to the user, and the user to the project, if the user exists
-                            currentDbRole.AspNetUsers.Add(user);
-                            user.AspNetRoles.Add(currentDbRole);
-                        }
-                        else
-                        {
-                            currentDbRole.AspNetUsers.Remove(user);
-                            user.AspNetRoles.Remove(currentDbRole);
-                        }
-                    }
-                }
-                if (ModelState.IsValid)
-                {
-                    db.Entry(currentDbRole).State = EntityState.Modified;
-                    db.Entry(user).State = EntityState.Modified;
-                }
-            }
             //Not sure why I need this check?
             if (ModelState.IsValid)
             {

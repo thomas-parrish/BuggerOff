@@ -17,6 +17,8 @@ namespace BuggerOff.ViewModels
         public int numTickets { get; set; }
         [DataTables(DisplayName = "Role", Searchable = true, Sortable = true)]
         public string highestRole { get; set; }
+        [DataTables(DisplayName = "Actions", Searchable = true, Sortable = true)]
+        public string buttons { get; set; }
 
         [DataTables(Visible = false)]
         public string phoneNumber { get; set; }

@@ -49,8 +49,8 @@ namespace BuggerOff.Controllers
                 dataTableParam,
                 formatter => new
                 {
-                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success details\" data-ticketId=\"" + formatter.projectId + "\"" +
-                                    "data-toggle=\"modal\" data-target=\"#detailsPopup\">" +
+                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success projectDetails\" data-ticketId=\"" + formatter.projectId + "\"" +
+                                    "data-toggle=\"modal\" data-target=\"#projectDetailsPopup\">" +
                                     "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
                                 "</a>" +
                                 ((User.IsInRole("Administrator")) ?

@@ -3,8 +3,7 @@
 @using BuggerOff.Controllers;
 @using Mvc.JQuery.Datatables;
 @model Ticket
-<link rel="stylesheet" href="~/assets/css/perfect-scrollbar.min.css" />
-<script src="~/assets/js/perfect-scrollbar.with-mousewheel.min.js"></script>
+
 @{
     ViewBag.Title = "Ticket Index";
 }
@@ -33,7 +32,7 @@
     </table>
 </div>
 
-<div class="modal fade" id="detailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+<div class="modal fade" id="ticketDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="padding:10px 10px 0px 10px;">
             <form id="detailsForm" action="@Url.Action("updateDetails","Tickets")">
@@ -277,7 +276,7 @@
 </script>
 
 <script type="text/html" id="newButton">
-    <a class="btn btn-white btn-info btn-sm" href="#" id="createTicket" data-toggle="modal" data-target="#detailsPopup">
+    <a class="btn btn-white btn-info btn-sm" href="#" id="createTicket" data-toggle="modal" data-target="#ticketDetailsPopup">
         <i class="fa fa-plus-circle"></i>
         New Ticket
     </a>
@@ -423,7 +422,7 @@
 
     //Add expand/contract details
     //load them from database through ajax call
-    $('body').on('click', '.details', function () {
+    $('body').on('click', '.ticketDetails', function () {
         //Make sure editors are hidden
         resetFormView();
 
@@ -487,7 +486,7 @@
 
 
 <script>
-    $('#detailsPopup').on('hidden.bs.modal', function() {
+    $('#ticketDetailsPopup').on('hidden.bs.modal', function() {
         resetFormView();
     });
 
@@ -690,9 +689,7 @@
             resetFormView();
             $('#fileUploadWidget').collapse('hide');
             $('#attachmentArea').collapse('show');
-            $('#detailsPopup').modal('hide');
-        });
-
-            
+            $('#ticketDetailsPopup').modal('hide');
+        }); 
     });
 </script>

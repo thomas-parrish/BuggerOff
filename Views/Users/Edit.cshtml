@@ -78,9 +78,7 @@
 
         /// DOM IS READY!032.6
 
-        var promise = $.get('/Users/GetEditViewModel', { id: $('#UserId').val() });
-
-        promise.done(function (Data) {
+        $.get('/Users/GetEditViewModel', { id: $('#UserId').val() }).done(function (Data) {
 
             // ajax get succeeded
             // show the data in console
