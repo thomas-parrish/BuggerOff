@@ -176,13 +176,13 @@
                     </div>
                 </div>
             </form>
-            <div class="row" id="submitEditToolbar">
+            <div class="row" id="submitEditTicketToolbar">
                 <div class="col-sm-12">
                     <div class="pull-right">
                         <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
                             Cancel
                         </a>
-                        <a href="#" class="btn btn-sm btn-primary" id="submitEdit">
+                        <a href="#" class="btn btn-sm btn-primary" id="submitEditTicket">
                             Submit
                         </a>
                     </div>
@@ -505,15 +505,16 @@
         $('.detailsEditor').hide();
 
         //Hide edit bars
-        $('#submitEditToolbar').hide();
+        $('#submitEditTicketToolbar').hide();
         $('#submitCreateToolbar').hide();
 
         //show edit button
         $('#detailsEdit').show();
+        $('#commentsWidget').show();
 
     }
     function showFormView() {
-        
+        $('#commentsWidget').hide();
         $('#title').hide();
         $('#titleEditor').show();
         //$('#detailsProject').hide();
@@ -542,90 +543,93 @@
         //On load, set default form visibility for modal
         resetFormView();
 
-        //Get project user options for assign to for project list
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("getUsersForProjects")',
-        }).done(function (data) {
-            var options = { '-1': '<option></option>' };
-            for (var projectKey in data) {
-                var optionList = "<option></option>";
-                for (var userKey in data[projectKey]) {
-                    optionList += '<option value="' + userKey + '">' + data[projectKey][userKey] + '</option>';
-                }
-                options[projectKey] = optionList;
-            }
-            window.projectUserOptions = options;
-
-            $("#detailsProjectEditor").change(function () {
-                var val = $(this).val();
-                $("#detailsAssignedToEditor").html(window.projectUserOptions[val]);
-            });
-        });
-
         $('body').on('click', '#createTicket', function () {
-            //Clear information in the modal
-            //Set the description, and load the comments into their respective divs
-            $('#projectTitle').text('');
-            $('#detailsAssignedToEditor').html('<option></option>');
+            //Get project user options for assign to for project list
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("getUsersForProjects")',
+            }).done(function (data) {
+                var options = { '-1': '<option></option>' };
+                for (var projectKey in data) {
+                    var optionList = "<option></option>";
+                    for (var userKey in data[projectKey]) {
+                        optionList += '<option value="' + userKey + '">' + data[projectKey][userKey] + '</option>';
+                    }
+                    options[projectKey] = optionList;
+                }
+                window.projectUserOptions = options;
 
-            //Populate details lists
-            $('#title').text('');
-            $('#detailsProject').text('');
-            $('#detailsStatus').text('');
-            $('#detailsCreatedBy').text('');
-            $('#detailsAssignedTo').text('');
-            $('#detailsSubmittedOn').text('');
-            $('#detailsUpdatedOn').text('');
-            $('.submitComment').data('');
-            $('#ticketId').val('');
+                $("#detailsProjectEditor").change(function () {
+                    var val = $(this).val();
+                    $("#detailsAssignedToEditor").html(window.projectUserOptions[val]);
+                });
+                //Clear information in the modal
+                //Set the description, and load the comments into their respective divs
+                $('#projectTitle').text('');
+                $('#detailsAssignedToEditor').html('<option></option>');
+
+                //Populate details lists
+                $('#title').text('');
+                $('#detailsProject').text('');
+                $('#detailsStatus').text('');
+                $('#detailsCreatedBy').text('');
+                $('#detailsAssignedTo').text('');
+                $('#detailsSubmittedOn').text('');
+                $('#detailsUpdatedOn').text('');
+                $('.submitComment').data('');
+                $('#ticketId').val('');
 
 
-            //populate description, comments, and attachments
-            $("#description").html('');
-            $("#commentArea").text('');
-            $("#attachmentArea").text('');
+                //populate description, comments, and attachments
+                $("#description").html('');
+                $("#commentArea").text('');
+                $("#attachmentArea").text('');
 
-            //Clear editor values
-            $('#detailsAssignedToEditor').val(-1);
-            $('#detailsStatusEditor').val(1);
-            $('#detailsProjectEditor').val(-1);
-            $('#descriptionTextEditor').val('Details go here..');
-            $('#titleEditor').val('Title goes here..');
+                //Clear editor values
+                $('#detailsAssignedToEditor').val(-1);
+                $('#detailsStatusEditor').val(1);
+                $('#detailsProjectEditor').val(-1);
+                $('#descriptionTextEditor').val('Details go here..');
+                $('#titleEditor').val('Title goes here..');
 
 
-            //resetFormView();
-            toggleFormView();
+                //resetFormView();
+                toggleFormView();
 
-            //This is the only time this box is ever shown, make sure to show it
-            $('#detailsProjectEditor').show();
-            $('#detailsProject').hide();
-            //Hide the comments box, we don't need it for new tickets. 
-            //First "comment" should be the description and edit button
-            $('#commentsWidget').hide();
-            $('#detailsEdit').hide();
+                //This is the only time this box is ever shown, make sure to show it
+                $('#detailsProjectEditor').show();
+                $('#detailsProject').hide();
+                //Hide the comments box, we don't need it for new tickets. 
+                //First "comment" should be the description and edit button
+                $('#commentsWidget').hide();
+                $('#detailsEdit').hide();
 
-            //show the save button
-            $('#submitCreateToolbar').show();
+                //show the save button
+                $('#submitCreateToolbar').show();
 
-            //Toggle the file uploader on
-            $('#fileUploadWidget').collapse('toggle');
-            $('#attachmentArea').collapse('toggle');
+                //Toggle the file uploader on
+                $('#fileUploadWidget').collapse('toggle');
+                $('#attachmentArea').collapse('toggle');
+            });
+
+
+            
         });
 
         //Edit ticket modal control
         $('body').on('click', '#detailsEdit', function () {
             //Show the save button
-            $('#submitEditToolbar').show();
+            $('#submitEditTicketToolbar').show();
 
             //Hide the edit button
             $('#detailsEdit').hide();
+            $('#commentsWidget').hide();
 
             showFormView();
         });
 
 
-        $('body').on('click', '#submitEdit', function () {
+        $('body').on('click', '#submitEditTicket', function () {
             //If an edit has been made, submit the form    
             if ($('#detailsStatus').text() != $('#detailsStatusEditor').find(':selected').text() ||
                 $('#detailsAssignedTo').text() != $('#detailsAssignedToEditor').find(':selected').text() ||

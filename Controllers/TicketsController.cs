@@ -34,6 +34,8 @@ namespace BuggerOff.Controllers
             try
             {
                 details = new TicketViewModelDetails(id);
+
+               
                 var ticket =  tickets.Where(t=>t.id==id);
 
                 ticketInfo = ticket.Select(currentTicket => new TicketViewModelShort()
@@ -207,6 +209,10 @@ namespace BuggerOff.Controllers
                     tickets = tickets.Where(m => (m.AssignedToUser.Id == currentUserId) || (m.AssignedToUser == null));
                 }
             }
+
+            //Don't show closed tickets
+            tickets = tickets.Where(t => t.StatusId != 5);
+
             var result = DataTablesResult.Create(tickets.Select(ticket => new TicketViewModelShort()
             {
                 id = ticket.id, 

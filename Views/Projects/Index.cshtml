@@ -83,13 +83,13 @@
                     </div>
                 </div>
             </form>
-            <div class="row" id="submitEditToolbar">
+            <div class="row" id="submitEditProjectToolbar">
                 <div class="col-sm-12">
                     <div class="pull-right">
                         <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
                             Cancel
                         </a>
-                        <a href="#" class="check btn btn-sm btn-primary" id="submitEdit">
+                        <a href="#" class="check btn btn-sm btn-primary" id="submitEditProject">
                             Submit
                         </a>
                     </div>
@@ -136,7 +136,7 @@
 
     $(document).ready(function () {
 
-        $('#submitEditToolbar').hide();
+        $('#submitEditProjectToolbar').hide();
         $('#submitCreateToolbar').hide();
 
         $.ajax({
@@ -161,7 +161,7 @@
 
         $('#projectNameEditor').hide();
         $('#usersEditor').hide();
-        $('#submitEditToolbar').hide();
+        $('#submitEditProjectToolbar').hide();
     }
 
 
@@ -177,14 +177,14 @@
 
         $('#projectNameEditor').show();
         $('#usersEditor').show();
-        $('#submitEditToolbar').show();
+        $('#submitEditProjectToolbar').show();
     });
 
     $('body').on('click', '#cancelEdit', function () {
         resetFormView();
     });
 
-    $('body').on('click', '#submitEdit', function () {
+    $('body').on('click', '#submitEditProject', function () {
         if (confirm("Are you sure you want to edit this Project?")) {
             //post the form data using webkit FormData
             var form = new FormData($('#detailsForm')[0]);

@@ -48,9 +48,12 @@ namespace BuggerOff.ViewModels
             this.UserId = UserId;
             this.Username = User.UserName;
             this.Email = User.Email;
+            this.name = User.FirstName + ' ' + User.LastName;
 
-            roleId = User.AspNetRoles.First().Id;
-            roleName = User.AspNetRoles.First().Name;
+            var role = User.AspNetRoles.FirstOrDefault();
+
+            roleId = (role == null) ? "" : role.Id;
+            roleName = (role == null) ? "" : role.Name;
 
             foreach(var item in ProjectList)
             {

@@ -1,46 +1,53 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-
 <div class="row" style="padding-top:50px;">
+    <div class="col-xs-4 col-xs-offset-4">
+        To demo the bug tracker, log into one of the following accounts, using the password "Bugger0ff!" (no quotes.)
+        <h4 style="text-align:center"><i class="fa fa-users"></i> Demo Accounts</h4>
+        <ul class="item-list">
+            <li class="item-red"><i class="fa fa-user"></i>&nbsp;<label>Administrator: </label> demoadmin@buggeroff.com </li>
+            <li class="item-orange"><i class="fa fa-user"></i>&nbsp;<label>Administrator: </label> demoprojectmanager@buggeroff.com </li>
+            <li class="item-green"><i class="fa fa-user"></i>&nbsp;<label>Administrator: </label> demouser@buggeroff.com </li>
+        </ul>
+    </div>
+</div>
+<div class="row" style="padding-top:50px;">
+    <div class="col-xs-10 col-xs-offset-1 text-center">
+        <h1>Features</h1>
+    </div>
+</div>
+<div class="row">
     <div class="col-xs-1"></div>
     <div class="col-xs-10">
         <div class="row">
             <div class="col-xs-4" id="featureList">
                 <h4 style="text-align:center"><i class="fa fa-bug"></i> Ticket Submission</h4>
                 <ul class="item-list">
-                    <li class="item-blue"><i class="fa fa-eye blue"></i>   View Tickets</li>
-                    <li class="item-green"><i class="fa fa-mail-forward green"></i>   Submit Tickets</li>
-                    <li class="item-orange"><i class="fa fa-wrench orange"></i>   Edit Tickets</li>
-                    <li class="item-default"><i class="fa fa-comments default"></i>   Comment on Tickets</li>
-                    <li class="item-blue"><i class="fa fa-image blue"></i>   Upload Attachments</li>
-                    <li class="item-red"><i class="icon-flash-off red"></i>   Delete Tickets</li>
+                    <li class="item-blue"><i class="fa fa-eye blue"></i>   Create/Edit bug tickets</li>
+                    <li class="item-red"><i class="fa fa-comments red"></i>   Comment on Tickets</li>
+                    <li class="item-green"><i class="fa fa-image green"></i>   Upload Attachments</li>
+                    <li class="item-orange"><i class="fa fa-user orange"></i>   Assign tickets to users</li>
                 </ul>
             </div>
             <div class="col-xs-4" id="featureList">
                 <h4 style="text-align:center"><i class="fa fa-pencil-square-o"></i> Project Management</h4>
                 <ul class="item-list">
-                    <li class="item-blue"><i class="fa fa-eye blue"></i>   View Projects</li>
-                    <li class="item-green"><i class="fa fa-plus green"></i>   Create Projects</li>
-                    <li class="item-orange"><i class="fa fa-institution orange"></i>   Assign Users to Projects</li>
+                    <li class="item-blue"><i class="fa fa-eye blue"></i>   Create projects and manage project users</li>
                 </ul>
             </div>
             <div class="col-xs-4" id="featureList">
                 <h4 style="text-align:center"><i class="fa fa-user"></i> User Management</h4>
                 <ul class="item-list">
                     <li class="item-blue"><i class="fa fa-sign-in blue"></i>   ASP.net User Authentication</li>
-                    <li class="item-orange"><i class="fa fa-users orange"></i>   View Users</li>
-                    <li class="item-green"><i class="fa fa-gavel green"></i>   Assign Roles to Users</li>
+                    <li class="item-green"><i class="fa fa-gavel green"></i>   Manage user priveleges</li>
+                    <li class="item-orange"><i class="fa fa-pencil-square-o orange"></i> Assign Users to projects</li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="col-xs-1"></div>
 </div>
-<div class="row" style="padding-top:50px;">
-    <div class="col-xs-10 col-xs-offset-1 text-center">
-        Give it a try! Log in with User: demouser@buggeroff.com, password: Bugger0ff!
-    </div>
-</div>
+
 
 <script src="~/Ace/assets/js/uncompressed/ace-elements.js"></script>

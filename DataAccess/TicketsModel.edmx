@@ -55,6 +55,8 @@
           <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="128" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <EntityType Name="Projects">
           <Key>
@@ -472,6 +474,8 @@
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
           <NavigationProperty Name="Projects" Relationship="Self.ProjectsAspNetUsers" FromRole="AspNetUsers" ToRole="Projects" />
           <NavigationProperty Name="TicketComments" Relationship="BuggerOffModel.FK_TicketComments_AspNetUsers" FromRole="AspNetUser" ToRole="TicketComment" />
+          <Property Name="FirstName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Project">
           <Key>
@@ -823,6 +827,8 @@
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="BuggerOffModel.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />

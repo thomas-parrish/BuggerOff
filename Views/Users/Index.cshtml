@@ -92,13 +92,13 @@
                     </div>
                 </div>
             </form>
-            <div class="row" id="submitEditToolbar">
+            <div class="row" id="submitEditUserToolbar">
                 <div class="col-sm-12">
                     <div class="pull-right">
                         <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
                             Cancel
                         </a>
-                        <a href="#" class="check btn btn-sm btn-primary" id="submitEdit">
+                        <a href="#" class="check btn btn-sm btn-primary" id="submitEditUser">
                             Submit
                         </a>
                     </div>
@@ -150,7 +150,7 @@
 
     $(document).ready(function () {
 
-        $('#submitEditToolbar').hide();
+        $('#submitEditUserToolbar').hide();
         $('#submitCreateToolbar').hide();
 
         @if(User.IsInRole("Administrator")){
@@ -191,7 +191,7 @@
 
         $('#roleEditor').hide();
         $('#projectsEditor').hide();
-        $('#submitEditToolbar').hide();
+        $('#submitEditUserToolbar').hide();
     }
 
 
@@ -207,14 +207,14 @@
 
         $('#roleEditor').show();
         $('#projectsEditor').show();
-        $('#submitEditToolbar').show();
+        $('#submitEditUserToolbar').show();
     });
 
     $('body').on('click', '#cancelEdit', function () {
         resetFormView();
     });
 
-    $('body').on('click', '#submitEdit', function () {
+    $('body').on('click', '#submitEditUser', function () {
         if (confirm("Are you sure you want to edit this User?")) {
             //post the form data using webkit FormData
             var form = new FormData($('#detailsForm')[0]);
@@ -245,7 +245,8 @@
         $.get('/Users/getEditViewModel', { id: id }).done(function (data) {
             ViewModelData = data;
 
-            $('#detailsUsername').text( data.Username );
+            $('#detailsUsername').text(data.Username);
+            $('#detailsName').text(data.name);
             $('#detailsEmail').text( data.Email );
             $('#detailsEmail').prop('href', "mailto:" + data.Email);
             // display data

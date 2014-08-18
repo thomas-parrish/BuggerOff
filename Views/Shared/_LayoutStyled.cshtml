@@ -128,7 +128,7 @@
             }
            
             <ul class="nav nav-list">
-                <li class="hover open outer @{if(route.Contains("Home") || route == "/"){ <text>open active</text>;}}">
+                <li class="hover outer @{if(route.Contains("Home") || route == "/"){ <text>open active</text>;}}">
                     <a href="@Url.Action("Index", "Home")">
                         <i class="menu-icon fa fa-home"></i>
                         <span class="menu-text"> Home </span>
