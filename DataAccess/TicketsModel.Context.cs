@@ -12,6 +12,8 @@ namespace BuggerOff.DataAccess
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class BuggerOffEntities : DbContext
     {
@@ -36,5 +38,14 @@ namespace BuggerOff.DataAccess
         public virtual DbSet<TicketStatus> TicketStatuses { get; set; }
         public virtual DbSet<TicketComment> TicketComments { get; set; }
         public virtual DbSet<TicketAttachment> TicketAttachments { get; set; }
+    
+        public virtual ObjectResult<getProjectsForCurrentUser_Result> getProjectsForCurrentUser(string userId)
+        {
+            var userIdParameter = userId != null ?
+                new ObjectParameter("userId", userId) :
+                new ObjectParameter("userId", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<getProjectsForCurrentUser_Result>("getProjectsForCurrentUser", userIdParameter);
+        }
     }
 }

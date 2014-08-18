@@ -197,6 +197,9 @@
     <Compile Include="DataAccess\AspNetUserLogin.cs">
       <DependentUpon>TicketsModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataAccess\getProjectsForCurrentUser_Result.cs">
+      <DependentUpon>TicketsModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataAccess\Partials\Ticket.cs" />
     <Compile Include="DataAccess\Project.cs">
       <DependentUpon>TicketsModel.tt</DependentUpon>

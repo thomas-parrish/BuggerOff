@@ -338,6 +338,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="getProjectsForCurrentUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="userId" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="BuggerOffModelStoreContainer">
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -728,6 +731,9 @@
             <End Role="Ticket" EntitySet="Tickets" />
             <End Role="TicketAttachment" EntitySet="TicketAttachments" />
           </AssociationSet>
+          <FunctionImport Name="getProjectsForCurrentUser" ReturnType="Collection(BuggerOffModel.getProjectsForCurrentUser_Result)">
+            <Parameter Name="userId" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="TicketComment">
           <Key>
@@ -791,6 +797,11 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="getProjectsForCurrentUser_Result">
+          <Property Type="String" Name="CreatedBy" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -939,6 +950,15 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="getProjectsForCurrentUser" FunctionName="BuggerOffModel.Store.getProjectsForCurrentUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="BuggerOffModel.getProjectsForCurrentUser_Result">
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

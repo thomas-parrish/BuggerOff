@@ -246,14 +246,21 @@ namespace BuggerOff.Controllers
             ViewBag.AssignedTo = new SelectList(db.AspNetUsers, "Id", "UserName");
             var userId = User.Identity.GetUserId();
             var user = db.AspNetUsers.Single(u=> u.Id == userId);
-            
+
+            //var projects = db.Projects.Include(u=>u.AspNetUsers);
             //Get all of the projects the current user is associated with
 
-            var projectQuery = db.Projects.Where(p => p.AspNetUsers.Contains(user));
-            if (User.IsInRole("Administrator"))
-                projectQuery = db.Projects;
+            if (!User.IsInRole("Administrator"))
+            {
+                var result = db.getProjectsForCurrentUser(userId);
+                ViewBag.ProjectId = new SelectList(result, "Id", "Name");
+            }
+            else
+            {
+                var projects = from p in db.Projects select p;
+                ViewBag.ProjectId = new SelectList(projects, "Id", "Name");
+            }
             
-            ViewBag.ProjectId = new SelectList(projectQuery, "Id", "Name");
             if (Request.IsAjaxRequest())
                 return PartialView(new Ticket());
             return View(new Ticket());
