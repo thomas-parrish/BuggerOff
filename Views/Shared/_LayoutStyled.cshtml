@@ -134,12 +134,15 @@
                         <span class="menu-text"> Home </span>
                     </a>
                 </li>
-                <li class="hover outer @{if(route.Contains("Tickets")){ <text>open active</text>;}}">
-                    <a href="@Url.Action("Index", "Tickets")">
-                        <i class="menu-icon fa fa-bug"></i>
-                        <span class="menu-text"> Tickets </span>
-                    </a>
-                </li>
+                @if (Request.IsAuthenticated)
+                {
+                    <li class="hover outer @{if(route.Contains("Tickets")){ <text>open active</text>;}}">
+                        <a href="@Url.Action("Index", "Tickets")">
+                            <i class="menu-icon fa fa-bug"></i>
+                            <span class="menu-text"> Tickets </span>
+                        </a>
+                    </li>
+                }
                 @if (User.IsInRole("Administrator"))
                 {
                     <li class="hover outer @{if(route.Contains("User")){ <text>open active</text>;}}">

@@ -242,7 +242,7 @@
     });
 
     function getDetails(id) {
-        $.get('/Users/GetEditViewModel', { id: id }).done(function (data) {
+        $.get('/Users/getEditViewModel', { id: id }).done(function (data) {
             ViewModelData = data;
 
             $('#detailsUsername').text( data.Username );

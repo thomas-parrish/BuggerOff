@@ -49,7 +49,7 @@ namespace BuggerOff.Controllers
                 dataTableParam,
                 formatter => new
                 {
-                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success projectDetails\" data-ticketId=\"" + formatter.projectId + "\"" +
+                    buttons = "<a href=\"#\" class=\"btn btn-sm btn-success projectDetails\" data-projectId=\"" + formatter.projectId + "\"" +
                                     "data-toggle=\"modal\" data-target=\"#projectDetailsPopup\">" +
                                     "<i class=\"glyphicon glyphicon-plus-sign\"></i> Details" +
                                 "</a>" +
@@ -62,22 +62,28 @@ namespace BuggerOff.Controllers
             return result;
         }
 
-
-
-        // GET: Projects/Details/5
-        [Authorize(Roles = "Administrator, Project Manager, Senior Developer, Developer")]
-        public ActionResult Details(int? id)
+        [HttpPost]
+        [Authorize(Roles = "Administrator, Project Manager")]
+        public ActionResult editProject(int id, IEnumerable<string> Users)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                var project = db.Projects.Find(id);
+
+                Dictionary<string, AspNetUser> userList = db.AspNetUsers.ToDictionary(key => key.Id);
+
+                //This needs to be obtimized, so that we only perform necessary operations!
+                //I.e. don't clear if we aren't making any changes!
+                project.AspNetUsers.Clear();
+
+                foreach (var userId in Users)
+                    project.AspNetUsers.Add(userList[userId]);
+
+                db.Entry(project).State = EntityState.Modified;
+                db.SaveChanges();
             }
-            Project project = db.Projects.Find(id);
-            if (project == null)
-            {
-                return HttpNotFound();
-            }
-            return View(project);
+            catch (Exception e) { }
+            return Json("");
         }
 
         // GET: Projects/Create
@@ -106,41 +112,9 @@ namespace BuggerOff.Controllers
             }
             return View(project);
         }
-
-        // GET: Projects/Edit/5
+        
         [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-
-            var Project = db.Projects.Find(id);
-            if (Project == null)
-                return HttpNotFound();
-            EditProjectViewModel ViewModel = new EditProjectViewModel()
-            {
-                ProjectId = Project.Id,
-                ProjectName = Project.Name,
-                UserList = new List<selectUserHelper>()
-            };
-
-            var userList = db.AspNetUsers.ToList();
-
-            foreach( var user in userList )
-                ViewModel.UserList.Add(new selectUserHelper() 
-                { 
-                    UserId = user.Id, 
-                    UserName = user.UserName, 
-                    IsSelected = user.Projects.Any(x=>x.Id == id),
-                    PreviouslySelected = user.Projects.Any(x=>x.Id == id)
-                });
-
-            if (Request.IsAjaxRequest())
-                return PartialView(ViewModel);
-            return View(ViewModel);
-        }
-        [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult GetViewModel(int? id)
+        public ActionResult getProjectViewModel(int id)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -169,94 +143,17 @@ namespace BuggerOff.Controllers
             return Json(ViewModel, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult SaveViewModel(EditProjectViewModel ViewModel)
+        [Authorize(Roles = "Administrator")]
+        public ActionResult getUsers()
         {
-            var project = db.Projects.Where(m => m.Id == ViewModel.ProjectId).ToList().FirstOrDefault();
-            if(project.Name != ViewModel.ProjectName)
+            var usersDict = new Dictionary<string, string>();
+
+            foreach (var user in db.AspNetUsers.ToList())
             {
-                project.Name = ViewModel.ProjectName;
-                db.Entry(project).State = EntityState.Modified;
-            }
-            
-            
-            Dictionary<string, AspNetUser> userList = db.AspNetUsers.ToDictionary(key=>key.Id);
-            foreach(var user in ViewModel.UserList)
-            {
-                var currentUser = userList[user.UserId];
-                if (currentUser != null)
-                {
-                    if (user.IsSelected != user.PreviouslySelected)
-                    {
-                        user.PreviouslySelected = user.IsSelected;
-                        if (user.IsSelected)
-                        {
-                            //Link the project to the user, and the user to the project, if the user exists
-                            project.AspNetUsers.Add(currentUser);
-                            currentUser.Projects.Add(project);
-                        }
-                        else
-                        {
-                            project.AspNetUsers.Remove(currentUser);
-                            currentUser.Projects.Remove(project);
-                        }
-                    }
-                }
-                if (ModelState.IsValid)
-                {
-                    db.Entry(project).State = EntityState.Modified;
-                    db.Entry(currentUser).State = EntityState.Modified;
-                }
+                usersDict.Add(user.Id, user.UserName);
             }
 
-            if (ModelState.IsValid)
-            {
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return RedirectToAction("Index");
-        }
-
-        // POST: Projects/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Edit([Bind(Include = "Id,Name,CreatedBy")] Project project, string newUserName="")
-        {
-            AspNetUser newUser = db.AspNetUsers.Where(m => m.UserName == newUserName).ToList().FirstOrDefault();
-            if (newUser != null)
-            {
-                //Link the project to the user, and the user to the project, if the user exists
-                project.AspNetUsers.Add(newUser);
-                newUser.Projects.Add(project);
-            }
-            if (ModelState.IsValid)
-            {
-                db.Entry(project).State = EntityState.Modified;
-                db.Entry(newUser).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(project);
-        }
-
-        // GET: Projects/Delete/5
-        [Authorize(Roles = "Administrator, Project Manager")]
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Project project = db.Projects.Find(id);
-            if (project == null)
-            {
-                return HttpNotFound();
-            }
-            return View(project);
+            return Json(usersDict, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Projects/Delete/5

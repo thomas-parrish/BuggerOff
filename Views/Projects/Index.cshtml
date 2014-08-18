@@ -26,6 +26,81 @@
     </table>
 </div>
 
+<div class="modal fade" id="projectDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="padding:10px 10px 10px 10px;">
+            <form id="detailsForm" action="@Url.Action("updateDetails","Projects")">
+                <input type="hidden" name="id" id="projectId" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="widget-box widget-color-green">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon fa fa-pencil-square-o smaller-90"></i>
+                                    Project Details
+                                </h4>
+                                <div style="float:right; padding-right:5px;">
+                                    <a href="#" id="editProjectButton"><h4><i class="ace-icon fa fa-pencil white"></i></h4></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-blue" style="height:180px; overflow-y:hidden">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon glyphicon glyphicon-list-alt smaller-90"></i>
+                                    Details
+                                </h4>
+                            </div>
+                            <div class="widget-body" style="padding:10px;">
+                                <ul class="list-group list-unstyled" style="margin-bottom:0px;">
+                                    <li>
+                                        <i class="ace-icon fa fa-info" style="padding-right: 5px;"></i><label>Name</label>
+                                        <span style="float:right;" id="detailsProjectName"></span>
+                                        <input type="text" name="projectName" id="projectNameEditor" style="width:100px; float:right;"/>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="widget-box widget-color-red" style="height:180px;">
+                            <div class="widget-header">
+                                <h4 class="widget-title lighter smaller">
+                                    <i class="ace-icon fa fa-user smaller-90"></i>
+                                    Users
+                                </h4>
+                            </div>
+                            <div class="widget-body" id="usersWidget" style="padding:10px; position:relative; height: 129px; overflow:hidden;">
+                                <ul class="item-list" id="usersList"></ul>
+                                <div id="usersEditor"><ul class="item-list" id="editUsersList"></ul></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row" id="submitEditToolbar">
+                <div class="col-sm-12">
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-sm btn-danger" id="cancelEdit">
+                            Cancel
+                        </a>
+                        <a href="#" class="check btn btn-sm btn-primary" id="submitEdit">
+                            Submit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script type="text/javascript">
     (function setDataTable() {
         if (!window.jQuery || !$.fn.DataTable) {
@@ -58,11 +133,142 @@
         $('#projectsTableControls').addClass('table-header');
         $('#Projects_length').prepend($('#newButton').html());
     })();
-</script>
+
+    $(document).ready(function () {
+
+        $('#submitEditToolbar').hide();
+        $('#submitCreateToolbar').hide();
+
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("getUsers")',
+        }).done(function (userDict) {
+            var users = [];
+
+            for (var userKey in userDict) {
+                users.push({ userName: userDict[userKey], userId: userKey });
+            }
+            $('#editUsersList').loadTemplate($('#usersEditorTemplate'), users);
+            
+        });
+    });
+
+    function resetFormView() {
+        //Hide editors, show values
+        $('#usersList').show();
+        $('#detailsProjectName').show();
+        $('#editProjectButton').show();
+
+        $('#projectNameEditor').hide();
+        $('#usersEditor').hide();
+        $('#submitEditToolbar').hide();
+    }
+
+
+    $('#userDetailsPopup').on('hidden.bs.modal', function () {
+        resetFormView();
+    });
+
+    $('body').on('click', '#editProjectButton', function () {
+        //Make sure editors are hidden
+        $('#usersList').hide();
+        $('#detailsProjectName').hide();
+        $('#editProjectButton').hide();
+
+        $('#projectNameEditor').show();
+        $('#usersEditor').show();
+        $('#submitEditToolbar').show();
+    });
+
+    $('body').on('click', '#cancelEdit', function () {
+        resetFormView();
+    });
+
+    $('body').on('click', '#submitEdit', function () {
+        if (confirm("Are you sure you want to edit this Project?")) {
+            //post the form data using webkit FormData
+            var form = new FormData($('#detailsForm')[0]);
+            window.myform = form;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("editProject", "Projects")',
+                data: form,
+                processData: false,
+                contentType: false,
+            }).done(function (result) {
+
+                //Update visible form to match edits, and then turn off edit mode
+
+                //Reload table results
+                $('#Projects').DataTable().draw();
+                getDetails($('#projectId').val());
+                resetFormView();
+            });
+        }
+        else {
+            $('#detailsForm')[0].reset();
+            resetFormView();
+        }
+    });
+
+    function getDetails(id) {
+        $.get('/Projects/getProjectViewModel', { id: id }).done(function (data) {
+            ViewModelData = data;
+            $('#detailsProjectName').text( data.ProjectName );
+
+            $('#projectId').val( data.ProjectId );
+            // display data
+
+            var activeUsers = [];
+            //clear check boxes
+            $('#projectsEditor input[type="checkbox"]').prop('checked', null);
+
+            for (var i = 0; i < ViewModelData.UserList.length; i++) {
+
+                if (ViewModelData.UserList[i].IsSelected) {
+                    $('#usersEditor input[type="checkbox"][value="' + ViewModelData.UserList[i].UserId + '"]').prop('checked', 'checked');
+                    activeUsers.push({ userName: ViewModelData.UserList[i].UserName });
+                }
+            }
+            $('#usersList').loadTemplate($('#usersTemplate'), activeUsers);
+
+            window.ViewModelData = ViewModelData;
+
+            $('#projectNameEditor').val(data.ProjectName);
+            $('#projectsWidget').ace_scroll({ size: 129 });
+
+            //Hide editors
+            resetFormView();
+        });
+    }
+
+    $('body').on('click', '.projectDetails', function () {
+            
+        $('#projectId').val($(this).data('projectid'));
+
+        getDetails($(this).data('projectid'));
+
+    });
+    </script>
 
 <script type="text/html" id="newButton">
     <a class="btn btn-white btn-info btn-sm" href="@Url.Action("Create", "Projects")">
         <i class="fa fa-plus-circle"></i>
         New Project
     </a>
+</script>
+
+<!--Templates-->
+
+
+<script type="text/html" id="usersTemplate">
+    <li class="item-red tight">
+        <span data-content="userName"></span>
+    </li>
+</script>
+
+<script type="text/html" id="usersEditorTemplate">
+    <li class="item-red tight">
+        <input class="ace-checkbox-2" name="Users" type="checkbox" data-value="userId" /> <span data-content="userName"></span>
+    </li>
 </script>
