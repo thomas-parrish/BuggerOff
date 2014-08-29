@@ -252,7 +252,10 @@ namespace BuggerOff.Controllers
 
             if (!User.IsInRole("Administrator"))
             {
-                var result = db.getProjectsForCurrentUser(userId);
+                //var result = db.getProjectsForCurrentUser(userId);
+
+                var result = db.Projects.Where(p => p.AspNetUsers.Any(u=>u.Id == userId));
+
                 ViewBag.ProjectId = new SelectList(result, "Id", "Name");
             }
             else

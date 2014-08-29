@@ -408,9 +408,17 @@
 
     //When a file is selected in the file input, remove the path from the filename and display it
     $(document).on('change', '#attachment', function () {
-        var input = $(this),
+        console.log(this);
+        if (this.files[0].size > 104857600) {
+            alert("File uploads greater than 100Mb are not currently supported.");
+            $('#attachment').val('');
+            $('#fileUploadText').val('');
+        }
+        else {
+            var input = $(this),
             label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-        input.trigger('fileselect', label);
+            input.trigger('fileselect', label);
+        }
     });
     $('#attachment').on('fileselect', function (event, label) {
         var input = $('#fileUploadText')
@@ -433,7 +441,7 @@
     $('body').on('click', '#upload', function (event) {
         event.preventDefault();
         //If this is not a new ticket, upload the attachment
-        if ($('ticketId').val() != null) {
+        if ($('#ticketId').val() != null) {
             var form = new FormData();
             form.append('ticketId', $('#ticketId').val());
             form.append('uploadDescription', $('#uploadDescription').val());
@@ -451,7 +459,8 @@
             }).done(function () {
                 //Reset the form, hide upload button and collapse upload form
                 getDetails({ id: $('#ticketId').val() });
-                $('#uploadForm')[0].reset();
+                $('#attachmentWidget').ace_scroll('end');
+                $('#detailsForm')[0].reset();
                 $('#upload').addClass('hidden');
                 $('#fileUploadWidget').collapse('toggle');
                 $('#attachmentArea').collapse('toggle');

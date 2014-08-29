@@ -2551,7 +2551,10 @@
     <Content Include="Ace\mustache\php\vendor\Mustache\Parser.php" />
     <Content Include="Ace\mustache\php\vendor\Mustache\Template.php" />
     <Content Include="Ace\mustache\php\vendor\Mustache\Tokenizer.php" />
+    <None Include="Properties\PublishProfiles\buggeroff - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\buggeroff - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\buggeroff.pubxml" />
+    <None Include="Properties\PublishProfiles\BuggerOffTwo.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\gridmvc.js" />
     <Content Include="Scripts\gridmvc.lang.ru.js" />
@@ -2568,7 +2571,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
